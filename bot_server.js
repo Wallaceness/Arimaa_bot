@@ -7,7 +7,8 @@ app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 app.use(express.static(__dirname));
 
-app.listen('8080', function(){
+var port= server.listen(process.env.PORT || 8080);
+app.listen(port, function(){
 	console.log("Ready to Play!");
 })
 
