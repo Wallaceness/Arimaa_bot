@@ -1,0 +1,19 @@
+body{
+	background-image: url("./pictures/arimaa_board.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+#header {}
+#board {width: 77vh; height: 77vh; background-color: white; border:10px solid black; margin-left: auto; margin-right:auto;}
+#board td{height: 12%; width: 12%; border: 5px solid black; margin: 0px;}
+#board td.trap{background-color:grey;}
+#submit_undo{text-align: center; height: 1vh;}
+#title{text-align: center; margin-bottom: 0px;}
+#welcome{text-align: center; font-size: 10pt; margin-top: 0px;}
+#turn{font-size: 36pt;}
+#silver{color: silver; background-color: rgba(0, 0, 0, .5); 
+	position: absolute; bottom: 75%; right: 2%;}
+#gold{color: gold; background-color: rgba(0, 0, 0, .5); position: absolute; bottom: 75%;}
+/*#new-gold{position: absolute; left: 0%;}
+#new-silver{position: absolute; right: 0%;}*/
+#buttons{text-align: center; margin-top: 0px;}
