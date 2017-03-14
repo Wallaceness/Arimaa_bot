@@ -22,6 +22,7 @@ var last_move;
 var moves=[];
 var swap=true;
 var gameover=false;
+var computer_move=false;
 
 function start(color_choice){
 	gameboard=[
@@ -210,6 +211,7 @@ function two_things(){
 		for (var x=0; x<8; x++){
 			var Id=i.toString()+"-"+x.toString();
 			document.getElementById(Id).onclick=function(){
+				if (computer_move) return;
 				toggle(this);
 			};
 		}
@@ -414,8 +416,9 @@ function submit(){
 		return;
 	}
 	if (count>0 || swap){
-		freeze=false;
 		count=0;
+		freeze=false;
+		computer_move=true;
 		if (color==='silver'){
 			color='gold';
 			other_color='silver';
@@ -449,12 +452,45 @@ function submit(){
 				}
 				gameboard=new_board;
 				seed_board();
+				console.log(gameboard);
+				if (color==='silver'){
+					color='gold';
+					other_color='silver';
+					if (swap){
+						swap=false;
+					}
+				}else{
+				color='silver';
+				other_color='gold';
+			}
+			freeze=false;
+			computer_move=false;
+			change_color();
 			}
 			else{
 					let move=0;
 					console.log(x);
 					var interval=setInterval(function(){
-						if (move==x.length-1)clearInterval(interval);
+						if (move==x.length){
+							clearInterval(interval);
+							console.log(gameboard);
+							if (color==='silver'){
+								color='gold';
+								other_color='silver';
+								if (swap){
+								swap=false;
+								}
+							}else{
+								color='silver';
+								other_color='gold';
+							}
+							freeze=false;
+							count=0;
+							moves=[];
+							computer_move=false;
+							change_color();
+							return;
+						}
 						var split=x[move].split(' ');
 						var space=split[0];
 						var direction=split[1];
@@ -467,45 +503,35 @@ function submit(){
 						var column=space%8;
 						console.log(row, column);
 						var piece=document.getElementById(row+'-'+column);
+						toggle(piece);
+						var destination;
+						var tracker=count;
 						if (direction=="south"){
-							gameboard[row-1][column]=gameboard[row][column];
-							gameboard[row][column]='';
-							seed_space(piece);
-							seed_space(document.getElementById((row-1)+'-'+column));
+							destination=document.getElementById((row-1)+'-'+column);
 						}
 						else if (direction=="north"){
-							gameboard[row+1][column]=gameboard[row][column];
-							gameboard[row][column]='';
-							seed_space(piece);
-							seed_space(document.getElementById((row+1)+'-'+column));
+							destination=document.getElementById((row+1)+'-'+column)
 						}
 						else if (direction=="east"){
-							gameboard[row][column-1]=gameboard[row][column];
-							gameboard[row][column]='';
-							seed_space(piece);
-							seed_space(document.getElementById(row+'-'+(column-1)));
+							destination=document.getElementById(row+'-'+(column-1))
 						}
 						else if (direction=="west"){
-							gameboard[row][column+1]=gameboard[row][column];
-							gameboard[row][column]='';
-							seed_space(piece);
-							seed_space(document.getElementById(row+'-'+(column+1)));
+							destination=document.getElementById(row+'-'+(column+1));
 						}
+						toggle(destination);
+						console.log(tracker, count);
+						if (count===tracker){
+							alert("Bot has submitted an illegal move :( . You win by forfeit.");
+							gameover=true;
+							freeze=true;
+							clearInterval(interval);
+							return;
+						}
+						//call toggle function here after having set selected to first space and calculated
+						//second space by direction
 						move+=1;
 					}, 500);
 				}
-			console.log(gameboard);
-			if (color==='silver'){
-				color='gold';
-				other_color='silver';
-				if (swap){
-					swap=false;
-				}
-		}else{
-			color='silver';
-			other_color='gold';
-		}
-		change_color();
 		})
 	}
 }
