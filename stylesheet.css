@@ -10,10 +10,10 @@ body{
 #submit_undo{text-align: center; height: 1vh;}
 #title{text-align: center; margin-bottom: 0px;}
 #welcome{text-align: center; font-size: 10pt; margin-top: 0px;}
-#turn{font-size: 36pt;}
+#turn{font-size: 36pt; text-align: center;}
 #silver{color: silver; background-color: rgba(0, 0, 0, .5); 
-	position: absolute; bottom: 75%; right: 2%;}
-#gold{color: gold; background-color: rgba(0, 0, 0, .5); position: absolute; bottom: 75%;}
+	position: absolute; bottom: 70%; right: 2%; padding: 2px;}
+#gold{color: gold; background-color: rgba(0, 0, 0, .5); position: absolute; bottom: 70%; padding: 2px;}
 /*#new-gold{position: absolute; left: 0%;}
 #new-silver{position: absolute; right: 0%;}*/
 #buttons{text-align: center; margin-top: 0px;}

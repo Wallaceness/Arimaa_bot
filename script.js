@@ -71,7 +71,14 @@ function start(color_choice){
 
 function change_color(){
 	let div=document.createElement('div');
-	let turn=document.createTextNode(color);
+	let turn;
+	if (color=='silver'){
+		turn="Silver";
+	}
+	else{
+		turn="Gold";
+	}
+	turn=document.createTextNode(turn);
 	div.appendChild(turn);
 	div.id=color;
 	let current=document.getElementById('turn');
@@ -86,6 +93,32 @@ function change_color(){
 	}
 	else if (color==='gold'){
 		current.replaceChild(div, silver);
+	}
+}
+
+function update_moves(){
+	if (swap){
+		return;
+	}
+	let div=document.createElement('div');
+	let moves=document.createTextNode("moves left: "+(4-count));
+	div.appendChild(moves);
+	div.id="moves";
+	let silver=document.getElementById('silver');
+	let gold=document.getElementById('gold');
+	let previous=document.getElementById('moves');
+	let parent;
+	if (!gold){
+		parent=silver;
+	}
+	else{
+		parent=gold;
+	}
+	if (!previous){
+	 parent.appendChild(div);
+	}
+	else{
+		parent.replaceChild(div, previous);
 	}
 }
 
@@ -193,6 +226,7 @@ function toggle(space){
 		//space.style.border="5px solid blue";
 		space.style.opacity=.5;
 		selected=space;
+		update_moves();
 		if (color==="gold" && gameboard[id[0]][id[2]]==='R' && selected.id[0]==0){
 			alert("Gold has won!");
 			freeze=true;
@@ -431,6 +465,7 @@ function submit(){
 		}
 		change_color();
 		moves=[];
+		update_moves();
 		return $.post('/', {color: color, board: gameboard.toString(), setup: swap}, function(data){
 			var x=eval(data);
 			console.log(x);
@@ -489,6 +524,7 @@ function submit(){
 							moves=[];
 							computer_move=false;
 							change_color();
+							update_moves();
 							return;
 						}
 						var split=x[move].split(' ');
@@ -521,7 +557,7 @@ function submit(){
 						toggle(destination);
 						console.log(tracker, count);
 						if (count===tracker){
-							alert("Bot has submitted an illegal move :( . You win by forfeit.");
+							alert("Bot has submitted an illegal move. You win by forfeit.");
 							gameover=true;
 							freeze=true;
 							clearInterval(interval);
@@ -575,4 +611,5 @@ function undo(){
 	selected=last_space;
 	selected.style.border="5px solid yellow";
 	pushes=[[]];
+	update_moves();
 }
