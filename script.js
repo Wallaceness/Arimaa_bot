@@ -580,7 +580,7 @@ function undo(){
 	var last_space=document.getElementById(last_move[0]);
 	var select=document.getElementById(last_move[1]);
 	var adjacents=find_adjacent(select);
-	selected.style.border="5px solid black";
+	//selected.style.border="5px solid black";
 	gameboard[+last_space.id[0]][+last_space.id[2]]=gameboard[+select.id[0]][+select.id[2]];
 	gameboard[select.id[0]][select.id[2]]='';
 	seed_space(last_space);
@@ -608,8 +608,10 @@ function undo(){
 	console.log(moves);
 	count-=1;
 	freeze=false;
+	selected.style.opacity=1;
 	selected=last_space;
-	selected.style.border="5px solid yellow";
+	selected.style.opacity=.5;
+	seed_space(selected);
 	pushes=[[]];
 	update_moves();
 }
