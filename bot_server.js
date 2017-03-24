@@ -2,6 +2,9 @@ var child_process=require("child_process");
 var express=require("express");
 var bodyparser=require('body-parser');
 var app=express();
+var database=require("./databases/tables");
+var Users=database.User;
+var Games=database.Game;
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
@@ -28,6 +31,34 @@ app.post('/', function(request, response, next){
 		else{
 			if (stderr) response.send(stderr);
 			else response.json(stdout);
+		}
+	})
+})
+
+app.get('/users/:userid', function(request, response, next){
+	Users.findById(request.params.userid)
+	.then(function(user){
+		if (user){
+			response.status=201;
+			response.send(user);
+		}
+		else{
+			response.status=404;
+			response.send("User does not exist.");
+		}
+	})
+})
+
+app.get('/games/:gameid', function(request, response, next){
+	Games.findById(request.params.gameid)
+	.then(function(game){
+		if (game){
+			response.status=201;
+			response.send(game);
+		}
+		else{
+			response.status=404;
+			response.send("Invalid game ID.")
 		}
 	})
 })
