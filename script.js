@@ -23,6 +23,7 @@ var moves=[];
 var swap=true;
 var gameover=false;
 var computer_move=false;
+var game_id=null;
 
 function start(color_choice){
 	gameboard=[
@@ -464,10 +465,20 @@ function submit(){
 			other_color='gold';
 		}
 		change_color();
+		let m=[];
+		for (var step in moves) m.push(moves[step]);
 		moves=[];
 		update_moves();
-		return $.post('/', {color: color, board: gameboard.toString(), setup: swap}, function(data){
-			var x=eval(data);
+		return $.post('/', {color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id}, function(data){
+			console.log(data);
+			var x=null;
+			if (data.length==2 && data[0].length==64) {
+				x=data[0];
+				game_id=data[1];
+			}
+			else{
+				var x=data;
+			}
 			console.log(x);
 			if (x.length==64){
 				var new_board=[];

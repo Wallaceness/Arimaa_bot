@@ -14,6 +14,9 @@ var Game=tables.define('game', {
 	},
 	moves:{
 		type: Sequelize.ARRAY(Sequelize.STRING)
+	},
+	board: {
+		type: Sequelize.ARRAY(Sequelize.STRING)
 	}
 })
 

@@ -71,7 +71,7 @@ def bot(color, position, setup=False):
         submit_move(position, final_move)
         #board(position)
         #return position[::-1]
-        return final_move
+        return [final_move, position[::-1]]
     for square in position:
         if steps==0:
             break
@@ -117,7 +117,7 @@ def bot(color, position, setup=False):
                         break
     #board(position)
     #return position[::-1]
-    return final_move
+    return [final_move, position[::-1]]
 
 
 

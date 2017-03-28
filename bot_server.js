@@ -21,17 +21,65 @@ app.get('/', function(request, response, next){
 })
 
 app.post('/', function(request, response, next){
-	console.log("post received!");
+	console.log("post received!", request.body);
 	var color=request.body.color;
 	var board=request.body.board;
 	var setup=request.body.setup;
+	var move=request.body.move;
+	var id=request.body.id;
+	var promise1=null;
+	console.log("move", request.body.move);
+	if (id==''){
+		console.log("creating game...");
+		promise1=Games.create({moves: [], board: [], userId: 1})
+		.then(function(game){
+			id=game.id;
+			console.log("game created", id);
+		})
+	}
+	else {
+		promise1=Games.findById(id)
+		.then(function(game){
+			console.log("updating game", id);
+			game.dataValues.moves.push(move);
+			game.dataValues.board.push(board);
+			game.updateAttributes({moves: game.dataValues.moves, board: game.dataValues.board});
+		})
+	}
+	Promise.all([promise1])
+	.then(function(){
 	child_process.exec("python ./arimaa_bot/shell_for_bot.py "+color+" "+board+" "+setup, function(error, stdout, stderr){
 		console.log(error, stdout, stderr)
 		if (error) response.send(error);
 		else{
 			if (stderr) response.send(stderr);
-			else response.json(stdout);
+			else {
+				var x=eval(stdout);
+				console.log('x', x);
+				if (x.length!=2){
+					response.json([x, id]);
+					console.log("update 1", id)
+					Games.findById(id)
+					.then(function(game){
+						game.dataValues.moves.push([]);
+						game.dataValues.board.push(stdout)
+						game.updateAttributes({moves: game.dataValues.moves, board: game.dataValues.board});
+					})
+				}
+				else{
+					response.json(x[0]);
+					console.log("update 2", id);
+					Games.findById(id)
+					.then(function(game){
+						game.dataValues.moves.push(x[0].toString());
+						game.dataValues.board.push(x[1].toString());
+						console.log('game', game)
+						game.updateAttributes({moves: game.dataValues.moves, board: game.dataValues.board});
+					})
+				}
+			}
 		}
+	})
 	})
 })
 
