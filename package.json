@@ -1,15 +1,15 @@
 {
-  "name": "Arimaa",
-  "version": "1.0.0",
-  "description": "a project for playing Arimaa",
-  "main": "bot_server.js",
-  "scripts": {
-    "start": "node bot_server.js"
-  },
-  "dependencies": {
-    "body-parser": "^1.12.0",
-    "express": "^4.12.0",
-    "pg": "^6.1.5",
-    "sequelize": "^3.30.3"
-  }
+    "name": "Arimaa",
+    "version": "1.0.0",
+    "description": "a project for playing Arimaa",
+    "main": "bot_server.js",
+    "scripts": {
+        "start": "node bot_server.js"
+    },
+    "dependencies": {
+        "body-parser": "^1.12.0",
+        "express": "^4.12.0",
+        "pg": "^6.1.5",
+        "sequelize": "^3.30.3"
+    }
 }
