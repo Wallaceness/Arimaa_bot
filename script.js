@@ -18,9 +18,7 @@ var pieces = {
     'silver': ['r', 'c', 'd', 'h', 'm', 'e']
 };
 var count = 0;
-var pushes = [
-    []
-];
+var pushes = [[]];
 var freeze = false;
 var last_move;
 var moves = [];
@@ -28,6 +26,7 @@ var swap = true;
 var gameover = false;
 var computer_move = false;
 var game_id = null;
+var previous_move=null;
 
 function start(color_choice) {
     gameboard = [
@@ -450,7 +449,25 @@ function submit() {
         }
         change_color();
         let m = [];
-        for (var step in moves) m.push(moves[step]);
+        for (var step in moves) {
+            //m.push(moves[step]);
+            var s=moves[step];
+            var location=s[0];
+            var destination=s[1];
+            var l=location.split('-');
+            var lr=l[1];
+            var lc=l[0];
+            var d=destination.split('-');
+            var dc=d[0];
+            var dr=d[1];
+            if (+lr>+dr) m.push(location+" west");
+            else if (+lr<+dr) m.push(location+" east");
+            else if (+lc>+dc) m.push(location+" north");
+            else if (+lc<+dc) m.push(location+" south");
+        }
+        if (previous_move){
+            m=previous_move.concat(m);
+            }
         moves = [];
         update_moves();
         return $.post('/', { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id }, function(data) {
@@ -498,6 +515,8 @@ function submit() {
             } else {
                 let move = 0;
                 console.log(x);
+                previous_move=[];
+                //console.log("previous move", previous_move)
                 var interval = setInterval(function() {
                     if (move == x.length) {
                         clearInterval(interval);
@@ -537,12 +556,16 @@ function submit() {
                     var tracker = count;
                     if (direction == "south") {
                         destination = document.getElementById((row - 1) + '-' + column);
+                        previous_move.push(row+'-'+column+' north');
                     } else if (direction == "north") {
                         destination = document.getElementById((row + 1) + '-' + column)
+                        previous_move.push(row+'-'+column+' south');
                     } else if (direction == "east") {
-                        destination = document.getElementById(row + '-' + (column - 1))
+                        destination = document.getElementById(row + '-' + (column - 1));
+                        previous_move.push(row+'-'+column+' west');
                     } else if (direction == "west") {
                         destination = document.getElementById(row + '-' + (column + 1));
+                        previous_move.push(row+'-'+column+' east');
                     }
                     toggle(destination);
                     console.log(tracker, count);
