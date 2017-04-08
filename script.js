@@ -223,10 +223,12 @@ function toggle(space) {
         alert("Gold has won!");
         freeze = true;
         gameover = true;
+        submit(true);
     } else if (color === "silver" && gameboard[id[0]][id[2]] === 'r' && selected.id[0] == 7) {
         alert("Silver has won!");
         freeze = true;
         gameover = true;
+        submit(true);
     }
 }
 
@@ -429,8 +431,8 @@ function move(id, s_id, adjacents, s_location, space) {
     }
 }
 
-function submit() {
-    if (gameover == true) {
+function submit(end) {
+    if (gameover == true && !end) {
         return;
     }
     if (count > 0 || swap) {
@@ -450,7 +452,6 @@ function submit() {
         change_color();
         let m = [];
         for (var step in moves) {
-            //m.push(moves[step]);
             var s=moves[step];
             var location=s[0];
             var destination=s[1];
@@ -468,9 +469,13 @@ function submit() {
         if (previous_move){
             m=previous_move.concat(m);
             }
+        var winner=false;
+        if (gameover){
+            winner=other_color;
+        }
         moves = [];
         update_moves();
-        return $.post('/', { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id }, function(data) {
+        return $.post('/', { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data) {
             console.log(data);
             var x = null;
             if (data.length == 2 && data[0].length == 64) {
@@ -574,6 +579,7 @@ function submit() {
                         gameover = true;
                         freeze = true;
                         clearInterval(interval);
+                        submit(true);
                         return;
                     }
                     //call toggle function here after having set selected to first space and calculated

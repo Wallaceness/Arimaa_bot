@@ -27,6 +27,7 @@ app.post('/', function(request, response, next) {
     var setup = request.body.setup;
     var move = request.body.move;
     var id = request.body.id;
+    var winner=request.body.winner;
     var promise1=null;
     console.log("move", request.body.move);
     if (id == '') {
@@ -36,19 +37,23 @@ app.post('/', function(request, response, next) {
             id = game.id;
             console.log("game created", id);
         })
-    } else {
+    } else if (winner!=='false'){
+        promise1=Games.findById(id)
+        .then(function(game) {
+            game.dataValues.moves.push(move);
+            if (board !=='') game.dataValues.board.push(board);
+            console.log('game', game)
+            game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board, winner: winner})
+            return game;
+        })
+
+    }
+    else {
         promise1=Promise.resolve();
     }
-    //     promise1 = Games.findById(id)
-    //     .then(function(game) {
-    //         console.log("updating game", id);
-    //         game.dataValues.moves.push(move);
-    //         game.dataValues.board.push(board);
-    //         game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board });
-    //     })
-    //}
     promise1
     .then(function() {
+        if (winner!='false') return;
         child_process.exec("python ./arimaa_bot/shell_for_bot.py " + color + " " + board + " " + setup, function(error, stdout, stderr) {
             console.log(error, stdout, stderr)
             if (error) response.send(error);
@@ -56,7 +61,6 @@ app.post('/', function(request, response, next) {
                 if (stderr) response.send(stderr);
                 else {
                     var x = eval(stdout);
-                    console.log('x', x);
                     if (x.length != 2) {
                         response.json([x, id]);
                         console.log("update 1", id)
@@ -75,7 +79,7 @@ app.post('/', function(request, response, next) {
                             if (board !=='') game.dataValues.board.push(board);
                             game.dataValues.board.push(x[1].toString());
                             console.log('game', game)
-                            game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board });
+                            game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board});
                         })
                     }
                 }
