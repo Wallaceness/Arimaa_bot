@@ -432,7 +432,7 @@ function move(id, s_id, adjacents, s_location, space) {
 }
 
 function submit(end) {
-    if (gameover == true && !end) {
+    if (gameover === true && !end) {
         return;
     }
     if (count > 0 || swap) {
