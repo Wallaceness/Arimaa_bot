@@ -442,9 +442,6 @@ function submit(end) {
         if (color === 'silver') {
             color = 'gold';
             other_color = 'silver';
-            if (swap && gameboard[7][7] !== '') {
-                swap = false;
-            }
         } else {
             color = 'silver';
             other_color = 'gold';
@@ -466,26 +463,20 @@ function submit(end) {
             else if (+lc>+dc) m.push(location+" north");
             else if (+lc<+dc) m.push(location+" south");
         }
-        if (previous_move){
-            m=previous_move.concat(m);
-            }
         var winner=false;
-        if (gameover){
-            winner=other_color;
-        }
         moves = [];
         update_moves();
-        return $.post('/', { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data) {
-            console.log(data);
-            var x = null;
-            if (data.length == 2 && data[0].length == 64) {
-                x = data[0];
-                game_id = data[1];
-            } else {
-                var x = data;
-            }
-            console.log(x);
-            if (x.length == 64) {
+        if (gameover){
+            winner=other_color;
+            return $.post("/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
+                console.log(response)
+            })
+        }
+        else if (swap){
+            swap=false
+            return $.post('/setup', { color: color, board: gameboard.toString(), setup: true, move: m.toString(), id: game_id, winner: winner}, function(data) {
+                game_id=data[1];
+                var x=data[0]
                 var new_board = [];
                 count = 0;
                 var sub = [];
@@ -517,13 +508,16 @@ function submit(end) {
                 freeze = false;
                 computer_move = false;
                 change_color();
-            } else {
+            })
+        }
+        else{
+            return $.post('/move', { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data) {
                 let move = 0;
-                console.log(x);
+                console.log(data);
                 previous_move=[];
                 //console.log("previous move", previous_move)
                 var interval = setInterval(function() {
-                    if (move == x.length) {
+                    if (move == data.length) {
                         clearInterval(interval);
                         console.log(gameboard);
                         if (color === 'silver') {
@@ -544,7 +538,7 @@ function submit(end) {
                         update_moves();
                         return;
                     }
-                    var split = x[move].split(' ');
+                    var split = data[move].split(' ');
                     var space = split[0];
                     var direction = split[1];
                     console.log(space, typeof(+space));
@@ -586,8 +580,8 @@ function submit(end) {
                     //second space by direction
                     move += 1;
                 }, 500);
-            }
-        })
+            })
+        }
     }
 }
 

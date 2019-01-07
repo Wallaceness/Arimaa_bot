@@ -53,7 +53,7 @@ app.post('/', function(request, response, next) {
     }
     promise1
     .then(function() {
-        if (winner!='false') return;
+        if (winner!=='false') return;
         child_process.exec("python ./arimaa_bot/shell_for_bot.py " + color + " " + board + " " + setup, function(error, stdout, stderr) {
             console.log(error, stdout, stderr)
             if (error) response.send(error);
@@ -61,7 +61,7 @@ app.post('/', function(request, response, next) {
                 if (stderr) response.send(stderr);
                 else {
                     var x = eval(stdout);
-                    if (x.length != 2) {
+                    if (x.length !== 2) {
                         response.json([x, id]);
                         console.log("update 1", id)
                         Games.findById(id)
@@ -85,6 +85,87 @@ app.post('/', function(request, response, next) {
                 }
             }
         })
+    })
+})
+
+app.post("/setup", function(request, response, next){
+    var color = request.body.color;
+    var board = request.body.board;
+    var setup = request.body.setup;
+    var move = request.body.move;
+    var id = request.body.id;
+    var winner=request.body.winner;
+    promise1=null;
+    if(!id || id===""){
+        promise1=Games.create({ moves: [], board: [], userId: 1 }) 
+    }
+    else{
+        promise1=promise.resolve(true)
+    }
+    promise1
+        .then(function(game) {
+            id = game.id;
+            console.log("game created", id);
+            child_process.exec("python ./arimaa_bot/shell_for_bot.py " + color + " " + board + " " + setup, function(error, stdout, stderr) {
+            console.log(error, stdout, stderr)
+            if (error) response.send(error);
+            else if (stderr) response.send(stderr);
+            else {
+                var x = eval(stdout);
+                response.json([x, id]);
+                console.log("update 1", id)
+                Games.findById(id)
+                .then(function(game) {
+                    game.dataValues.moves.push([]);
+                    game.dataValues.board.push(stdout)
+                    game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board });
+                })
+            }
+        })
+        })
+})
+
+app.post("/gameover", function(request, response, next){
+    var color = request.body.color;//handle illegal moves
+    var board = request.body.board;
+    var setup = request.body.setup;
+    var move = request.body.move;
+    var id = request.body.id;
+    var winner=request.body.winner;
+    Games.findById(id)
+        .then(function(game) {
+            game.dataValues.moves.push(move);
+            if (board !=='') game.dataValues.board.push(board);
+            console.log('game', game)
+            game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board, winner: winner})
+            response.sendStatus(200);
+        })
+})
+
+app.post("/move", function(request, response, next){
+    var color = request.body.color;
+    var board = request.body.board;
+    var setup = request.body.setup;
+    var move = request.body.move;
+    var id = request.body.id;
+    var winner=request.body.winner;
+    child_process.exec("python ./arimaa_bot/shell_for_bot.py " + color + " " + board + " " + setup, function(error, stdout, stderr) {
+        console.log(error, stdout, stderr)
+        if (error) response.send(error);
+        else if (stderr) response.send(stderr);
+        else {
+            var x = eval(stdout);
+                response.json(x[0]);
+                console.log("update 2", id);
+                Games.findById(id)
+                .then(function(game) {
+                    game.dataValues.moves.push(move);
+                    if (board !=='') game.dataValues.board.push(board);
+                    game.dataValues.board.push(x[1].toString());
+                    console.log('game', game)
+                    game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board});
+                })
+        }
     })
 })
 
