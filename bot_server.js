@@ -20,74 +20,6 @@ app.get('/', function(request, response, next) {
     response.sendFile(__dirname + '/board.html');
 })
 
-app.post('/', function(request, response, next) {
-    console.log("post received!", request.body);
-    var color = request.body.color;
-    var board = request.body.board;
-    var setup = request.body.setup;
-    var move = request.body.move;
-    var id = request.body.id;
-    var winner=request.body.winner;
-    var promise1=null;
-    console.log("move", request.body.move);
-    if (id == '') {
-        console.log("creating game...");
-        promise1 = Games.create({ moves: [], board: [], userId: 1 })
-        .then(function(game) {
-            id = game.id;
-            console.log("game created", id);
-        })
-    } else if (winner!=='false'){
-        promise1=Games.findById(id)
-        .then(function(game) {
-            game.dataValues.moves.push(move);
-            if (board !=='') game.dataValues.board.push(board);
-            console.log('game', game)
-            game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board, winner: winner})
-            return game;
-        })
-
-    }
-    else {
-        promise1=Promise.resolve();
-    }
-    promise1
-    .then(function() {
-        if (winner!=='false') return;
-        child_process.exec("python ./arimaa_bot/shell_for_bot.py " + color + " " + board + " " + setup, function(error, stdout, stderr) {
-            console.log(error, stdout, stderr)
-            if (error) response.send(error);
-            else {
-                if (stderr) response.send(stderr);
-                else {
-                    var x = eval(stdout);
-                    if (x.length !== 2) {
-                        response.json([x, id]);
-                        console.log("update 1", id)
-                        Games.findById(id)
-                        .then(function(game) {
-                            game.dataValues.moves.push([]);
-                            game.dataValues.board.push(stdout)
-                            game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board });
-                        })
-                    } else {
-                        response.json(x[0]);
-                        console.log("update 2", id);
-                        Games.findById(id)
-                        .then(function(game) {
-                            game.dataValues.moves.push(move);
-                            if (board !=='') game.dataValues.board.push(board);
-                            game.dataValues.board.push(x[1].toString());
-                            console.log('game', game)
-                            game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board});
-                        })
-                    }
-                }
-            }
-        })
-    })
-})
-
 app.post("/setup", function(request, response, next){
     var color = request.body.color;
     var board = request.body.board;
@@ -112,7 +44,7 @@ app.post("/setup", function(request, response, next){
             else if (stderr) response.send(stderr);
             else {
                 var x = eval(stdout);
-                response.json([x, id]);
+                response.json({board: x, id: id});
                 console.log("update 1", id)
                 Games.findById(id)
                 .then(function(game) {
@@ -155,7 +87,7 @@ app.post("/move", function(request, response, next){
         else if (stderr) response.send(stderr);
         else {
             var x = eval(stdout);
-                response.json(x[0]);
+                response.json({move: x[0]});
                 console.log("update 2", id);
                 Games.findById(id)
                 .then(function(game) {
