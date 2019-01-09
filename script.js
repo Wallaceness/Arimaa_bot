@@ -54,12 +54,12 @@ function start(color_choice) {
         gameboard.push(['C', 'H', 'D', 'M', 'E', 'D', 'H', 'C']);
         gameboard.push(['R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
         seed_board();
-        if (color == 'silver') {
+        if (color === 'silver') {
             color = 'gold';
             change_color();
         }
     } else if (color_choice === 'silver') {
-        color = 'silver';
+        color="silver";
         submit()
             .then(function() {
                 gameboard = gameboard.slice(2);
@@ -74,7 +74,7 @@ function start(color_choice) {
 function change_color() {
     let div = document.createElement('div');
     let turn;
-    if (color == 'silver') {
+    if (color === 'silver') {
         turn = "Silver";
     } else {
         turn = "Gold";
@@ -120,10 +120,10 @@ function update_moves() {
 }
 
 function setup(space) {
-    if (swap == true) {
-        if (color == "gold") {
+    if (swap === true) {
+        if (color === "gold") {
             return +space.id[0] > 5;
-        } else if (color == "silver") {
+        } else if (color === "silver") {
             return +space.id[0] < 2;
         }
     }
@@ -439,12 +439,15 @@ function submit(end) {
         count = 0;
         freeze = false;
         computer_move = true;
-        if (color === 'silver') {
-            color = 'gold';
-            other_color = 'silver';
-        } else {
+        if (color === 'gold') {
             color = 'silver';
             other_color = 'gold';
+        } else {
+            color = 'gold';
+            other_color = 'silver';
+            if (game_id && swap){
+                swap=false;
+            }
         }
         change_color();
         let m = [];
@@ -473,7 +476,6 @@ function submit(end) {
             })
         }
         else if (swap){
-            swap=false
             return $.post('/setup', { color: color, board: gameboard.toString(), setup: true, move: m.toString(), id: game_id, winner: winner}, function(data) {
                 game_id=data.id;
                 var x=data.board
@@ -498,9 +500,7 @@ function submit(end) {
                 if (color === 'silver') {
                     color = 'gold';
                     other_color = 'silver';
-                    if (swap) {
-                        swap = false;
-                    }
+                    swap=false;
                 } else {
                     color = 'silver';
                     other_color = 'gold';
