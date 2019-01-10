@@ -3,12 +3,15 @@ var express = require("express");
 var bodyparser = require('body-parser');
 var app = express();
 var database = require("./databases/tables");
+const path=require("path");
 var Users = database.User;
 var Games = database.Game;
 
+const api="/api"
+
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname)));
 
 var port = app.listen(process.env.PORT || 8080);
 app.listen(port, function() {
@@ -17,10 +20,10 @@ app.listen(port, function() {
 
 app.get('/', function(request, response, next) {
     console.log("get received!");
-    response.sendFile(__dirname + '/board.html');
+    response.sendFile(path.join(__dirname,'board.html'));
 })
 
-app.post("/setup", function(request, response, next){
+app.post(api+"/setup", function(request, response, next){
     var color = request.body.color;
     var board = request.body.board;
     var setup = request.body.setup;
@@ -57,7 +60,7 @@ app.post("/setup", function(request, response, next){
         })
 })
 
-app.post("/gameover", function(request, response, next){
+app.post(`${api}/gameover`, function(request, response, next){
     var color = request.body.color;//handle illegal moves
     var board = request.body.board;
     var setup = request.body.setup;
@@ -74,7 +77,7 @@ app.post("/gameover", function(request, response, next){
         })
 })
 
-app.post("/move", function(request, response, next){
+app.post(api+"/move", function(request, response, next){
     var color = request.body.color;
     var board = request.body.board;
     var setup = request.body.setup;
@@ -101,18 +104,28 @@ app.post("/move", function(request, response, next){
     })
 })
 
-app.get('/users/:userid', function(request, response, next) {
-    Users.findById(request.params.userid)
+app.get(`${api}/users/:userid`, function(request, response, next) {
+    Users.findOne({where: {id: request.params.userid}, include: [{model:Games}]})
         .then(function(user) {
+            console.log(user)
             if (user) {
                 response.status = 201;
-                response.send(user);
+                const games=user.games.map((game)=>{
+                    return {id: game.id, winner: game.winner, moves: Math.ceil(game.board.length/2) }
+                })
+                response.send({userid: user.id, username: user.username, games: games});
             } else {
                 response.status = 404;
                 response.send("User does not exist.");
             }
         })
 })
+
+app.get("/users/:userid", function(request, response, next){
+    response.sendFile(__dirname+"/games_list.html")
+})
+
+
 
 app.get('/games/:gameid', function(request, response, next) {
     Games.findById(request.params.gameid)

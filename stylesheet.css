@@ -4,7 +4,9 @@ body {
     background-size: cover;
 }
 
-#header {}
+.centered{
+    text-align: center;
+}
 
 #board {
     width: 77vh;

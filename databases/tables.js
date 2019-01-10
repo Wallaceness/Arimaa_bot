@@ -4,7 +4,7 @@ var tables = new Sequelize("postgres://localhost:5432/arimaa")
 var User = tables.define('user', {
     username: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
     }
 })
 

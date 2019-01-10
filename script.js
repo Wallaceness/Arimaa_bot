@@ -471,12 +471,12 @@ function submit(end) {
         update_moves();
         if (gameover){
             winner=other_color;
-            return $.post("/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
+            return $.post("/api/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
                 console.log(response)
             })
         }
         else if (swap){
-            return $.post('/setup', { color: color, board: gameboard.toString(), setup: true, move: m.toString(), id: game_id, winner: winner}, function(data) {
+            return $.post('/api/setup', { color: color, board: gameboard.toString(), setup: true, move: m.toString(), id: game_id, winner: winner}, function(data) {
                 game_id=data.id;
                 var x=data.board
                 var new_board = [];
@@ -511,7 +511,7 @@ function submit(end) {
             })
         }
         else{
-            return $.post('/move', { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data) {
+            return $.post('/api/move', { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data) {
                 let move = 0;
                 console.log(data);
                 previous_move=[];
