@@ -113,7 +113,7 @@ app.get(`${api}/users/:userid`, function(request, response, next) {
                 const games=user.games.map((game)=>{
                     return {id: game.id, winner: game.winner, moves: Math.ceil(game.board.length/2) }
                 })
-                response.send({userid: user.id, username: user.username, games: games});
+                response.json({userid: user.id, username: user.username, games: games});
             } else {
                 response.status = 404;
                 response.send("User does not exist.");
@@ -122,7 +122,7 @@ app.get(`${api}/users/:userid`, function(request, response, next) {
 })
 
 app.get("/users/:userid", function(request, response, next){
-    response.sendFile(__dirname+"/games_list.html")
+    response.sendFile(path.join(__dirname, "games_list.html"))
 })
 
 
