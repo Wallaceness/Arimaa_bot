@@ -125,9 +125,7 @@ app.get("/users/:userid", function(request, response, next){
     response.sendFile(path.join(__dirname, "games_list.html"))
 })
 
-
-
-app.get('/games/:gameid', function(request, response, next) {
+app.get(`${api}/games/:gameid`, function(request, response, next){
     Games.findById(request.params.gameid)
         .then(function(game) {
             if (game) {
@@ -138,4 +136,8 @@ app.get('/games/:gameid', function(request, response, next) {
                 response.send("Invalid game ID.")
             }
         })
+})
+
+app.get('/games/:gameid', function(request, response, next) {
+    response.sendFile(path.join(__dirname, "view_game.html"))
 })
