@@ -4,26 +4,6 @@ body {
     background-size: cover;
 }
 
-#board {
-    width: 77vh;
-    height: 77vh;
-    background-color: white;
-    border: 10px solid black;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#board td {
-    height: 12%;
-    width: 12%;
-    border: 5px solid black;
-    margin: 0px;
-}
-
-#board td.trap {
-    background-color: grey;
-}
-
 #submit_undo {
     text-align: center;
     height: 1vh;

@@ -1,3 +1,21 @@
 .centered{
     text-align: center;
 }
+
+.arimaa-board {
+    width: 77vh;
+    height: 77vh;
+    background-color: white;
+    border: 10px solid black;
+}
+
+.arimaa-board td {
+    height: 12%;
+    width: 12%;
+    border: 5px solid black;
+    margin: 0px;
+}
+
+.arimaa-board td.trap {
+    background-color: grey;
+}
