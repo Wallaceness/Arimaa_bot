@@ -4,6 +4,10 @@ body {
     background-size: cover;
 }
 
+#board{
+    margin: auto;
+}
+
 #submit_undo {
     text-align: center;
     height: 1vh;
