@@ -1,0 +1,41 @@
+#board-box{
+	float: right;
+	display: inline-block;
+}
+
+#view-board{
+	height: calc(100vh - 83px);
+	width: calc(100vh - 83px);
+	border: none;
+	margin: auto;
+}
+
+#view-moves{
+	width: calc(100vw - 16px - (100vh - 83px));
+	height: calc(100vh - 83px);
+	overflow: auto;
+	float: left;
+	border: 2px solid #777676;
+}
+
+#view-board td{
+	height: 11.875%;
+	width: 11.875%;
+}
+
+#view-board td.label-cell{
+	border: none;
+	width: 5%;
+	width: 5%;
+	text-align: center;
+}
+
+
+
+/*#view-board td.top-border{
+	border-top: 10px solid black;
+}
+
+#view-board td.right-border{
+	border-right: 10px solid black;
+}*/

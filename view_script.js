@@ -34,11 +34,24 @@ $('document').ready(function(){
             if (traps.indexOf(id) !== -1) {
                 board += "<td data-status='not-selected' class='trap' id='" + id + "'></td>"
             } else {
+                if(x==0){
+                    board+="<td id='label-rows-"+i+"' class='label-cell right-border'>"+(8-parseInt(i)).toString()+"</td>"
+                }
                 board += "<td data-status='not-selected' id='" + id + "'></td>"
             }
         }
         board += "</tr>";
     }
+    board+="<tr>"
+    for (var d=0; d<9; d++){
+        if (d===0){
+            board+="<td class='label-cell'></td>"
+        }
+        else{
+            board+="<td id='label-cols-"+String.fromCharCode(64+d)+"' class='label-cell top-border'>"+String.fromCharCode(64+d)+"</td>"
+        }
+    }
+    board+="</tr>"
     console.log(document.getElementById('view-board'))
     document.getElementById('view-board').innerHTML = (board);
 	}
@@ -52,7 +65,8 @@ $('document').ready(function(){
         for (var b = 0; b < moves.length; b++) {
             var Id = "move-"+b
             document.getElementById(Id).onclick = function() {
-                setMove(b)
+                var index=this.id.split("-")[1]
+                setMove(index);
             };
     }
     }
