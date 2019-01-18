@@ -59,7 +59,7 @@ $('document').ready(function(){
     function createTable(){
     	var table=""
     	for (var y=0; y<moves.length; y++){
-    		table+="<tr><td id='move-"+y+"'>"+moves[y]+"</td></tr>"
+    		table+="<tr><td id='move-"+y+"'>"+convertMove(moves[y])+"</td></tr>"
     	}
     	document.getElementById("view-moves").innerHTML=table;
         for (var b = 0; b < moves.length; b++) {
@@ -142,6 +142,26 @@ $('document').ready(function(){
                 return new_board;
     }
 
+    function convertMove(move){
+        var value=[]
+        move=move.split(",")
+        for (var e=0; e<move.length; e++){
+            var split = move[e].split(' ');
+            var space = split[0];
+            var direction = split[1];
+            console.log(space, typeof(+space));
+            if (typeof(+space) !== 'number') {
+                space = space.slice(1);
+            }
+            var row = parseInt(space.split("-")[0])+1
+            var column = String.fromCharCode(65+parseInt(space.split("-")[1]));
+            console.log(row, column);
+            var piece = document.getElementById(row + '-' + column);
+            value.push(" "+column+"-"+row+" "+direction);
+        }
+        return value;
+    }
+
     function seed_board() {
         for (var row=0; row<gameboard.length; row++) {
             for (var space=0; space<gameboard[row].length; space++) {
@@ -152,6 +172,7 @@ $('document').ready(function(){
     }
     
 	var params=window.location.pathname.split("/")
+    $('#game-no').text(params[params.length-1]) 
 	$.get("/api/games/"+params[params.length-1], function(response){
 		moves=response.moves;
 		boards=response.board
