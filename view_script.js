@@ -25,6 +25,47 @@ $('document').ready(function(){
 	var last_move;
 	var moves = [];
 	var traps = ['2-2', '2-5', '5-2', '5-5'];
+    var currentMove=null;
+    function find_adjacent(space) {
+        var id = space.id;
+        var row = +id[0];
+        var column = +id[2];
+        var temp = [(row - 1).toString() + '-' + column.toString(),
+            (row + 1).toString() + '-' + column.toString(),
+            row.toString() + '-' + (column + 1).toString(),
+            row.toString() + '-' + (column - 1).toString()
+        ];
+        var adjacents = [];
+        for (var x in temp) {
+            if ((temp[x][0] !== '-' && temp[x][0] !== '8') && (temp[x][2] !== '-' && temp[x][2] !== '8')) {
+                adjacents.push(temp[x]);
+            }
+        }
+        return adjacents;
+    }
+
+    function trap_check(space) {
+        var location = gameboard[+space.id[0]][+space.id[2]];
+        if (pieces['gold'].indexOf(location) !== -1) {
+            var color = 'gold';
+        } else {
+            var color = 'silver'
+        }
+        if (traps.indexOf(space.id) !== -1) {
+            var adjacents = find_adjacent(space);
+            adjacents.push((+space.id[0] - 1).toString() + '-' + space.id[2]);
+            adjacents.push((+space.id[0] + 1).toString() + '-' + space.id[2]);
+            for (var item in adjacents) {
+                var piece = gameboard[+adjacents[item][0]][+adjacents[item][2]];
+                if (pieces[color].indexOf(piece) !== -1) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
 	function createBoard() {
     var board = '';
     for (var i = 0; i < 8; i++) {
@@ -61,10 +102,17 @@ $('document').ready(function(){
     	for (var y=0; y<moves.length; y++){
     		table+="<tr><td id='move-"+y+"'>"+convertMove(moves[y])+"</td></tr>"
     	}
+        table+="<tfoot><tr><td><button id='play-button'>></button></td></tr></tfoot>"
     	document.getElementById("view-moves").innerHTML=table;
+        document.getElementById("play-button").onclick=playMove;
         for (var b = 0; b < moves.length; b++) {
             var Id = "move-"+b
             document.getElementById(Id).onclick = function() {
+                if (currentMove){
+                    document.getElementById(currentMove).classList.remove("selected-move");
+                }
+                currentMove=this.id;
+                this.classList.add("selected-move");
                 var index=this.id.split("-")[1]
                 setMove(index);
             };
@@ -85,13 +133,13 @@ $('document').ready(function(){
     function seed_space(space) {
         space.style.border = "5px solid black";
         var id = space.id;
-        // if (trap_check(space) === true) {
-        //     var record = [id, gameboard[id[0]][id[2]]];
-        //     space.style.backgroundImage = 'none';
-        //     space.style.opacity = 1;
-        //     gameboard[id[0]][id[2]] = '';
-        //     return record
-        // }
+        if (trap_check(space) === true) {
+            var record = [id, gameboard[id[0]][id[2]]];
+            space.style.backgroundImage = 'none';
+            space.style.opacity = 1;
+            gameboard[id[0]][id[2]] = '';
+            return record
+        }
         var board = gameboard[id[0]][id[2]];
         if (board == '') {
             space.style.backgroundImage = "none";
@@ -153,7 +201,7 @@ $('document').ready(function(){
             if (typeof(+space) !== 'number') {
                 space = space.slice(1);
             }
-            var row = parseInt(space.split("-")[0])+1
+            var row = 8-parseInt(space.split("-")[0])
             var column = String.fromCharCode(65+parseInt(space.split("-")[1]));
             console.log(row, column);
             var piece = document.getElementById(row + '-' + column);
@@ -169,6 +217,58 @@ $('document').ready(function(){
                 seed_space(location);
             }
         }
+    }
+
+    function playMove(){
+        var move=parseInt(currentMove.split("-")[1])+1;
+        var steps=moves[move].split(",");
+        for (var e=0; e<steps.length; e++){
+            var step=steps[e];
+            step=step.split(" ");
+            var space=step[0]
+            var direction=step[1];
+            var adjacents=find_adjacent(document.getElementById(space))
+            space=space.split("-");
+            var piece=gameboard[space[0]][space[1]]
+            gameboard[space[0]][space[1]]='';
+            seed_space(document.getElementById(space.join("-")))
+            for (var f=0; f<adjacents.length; f++){
+                var adj=adjacents[f].split("-")
+                if (trap_check(document.getElementById(adjacents[f]))){
+                    gameboard[adj[0]][adj[1]]='';
+                    seed_space(document.getElementById(adj[0]+"-"+adj[1]))
+                    break;
+                }
+            }
+            switch(direction){
+                case 'north':{
+                    gameboard[parseInt(space[0])-1][space[1]]=piece
+                    seed_space(document.getElementById((parseInt(space[0])-1).toString()+"-"+space[1].toString()))
+                    break;
+                }
+                case 'south':{
+                    gameboard[parseInt(space[0])+1][space[1]]=piece
+                    seed_space(document.getElementById((parseInt(space[0])+1).toString()+"-"+space[1].toString()))
+                    break
+                }
+                case 'east':{
+                    gameboard[space[0]][parseInt(space[1])+1]=piece
+                    seed_space(document.getElementById(space[0].toString()+"-"+(parseInt(space[1])+1).toString()))
+                    break;
+                }
+                case 'west':{
+                    gameboard[space[0]][parseInt(space[1])-1]=piece
+                    seed_space(document.getElementById(space[0].toString()+"-"+(parseInt(space[1])-1).toString()))
+                    break;
+                }
+                default:
+                    throw new Error("No direction.")
+            }
+            setTimeout(500)
+        }
+        document.getElementById(currentMove).classList.remove("selected-move")
+        currentMove="move-"+move;
+        document.getElementById(currentMove).classList.add("selected-move")
     }
     
 	var params=window.location.pathname.split("/")
