@@ -472,7 +472,7 @@ function submit(end) {
         if (gameover){
             winner=other_color;
             return $.post("/api/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
-                console.log(response)
+                console.log(data)
             })
         }
         else if (swap){

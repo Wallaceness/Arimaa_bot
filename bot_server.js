@@ -95,6 +95,7 @@ app.post(api+"/move", function(request, response, next){
                 Games.findById(id)
                 .then(function(game) {
                     game.dataValues.moves.push(move);
+                    game.dataValues.moves.push(convertMove(x[0]).join(","));
                     if (board !=='') game.dataValues.board.push(board);
                     game.dataValues.board.push(x[1].toString());
                     console.log('game', game)
@@ -141,3 +142,22 @@ app.get(`${api}/games/:gameid`, function(request, response, next){
 app.get('/games/:gameid', function(request, response, next) {
     response.sendFile(path.join(__dirname, "view_game.html"))
 })
+
+function convertMove(move){
+    let moves=[]
+    for (let x=0; x<move.length; x++){
+        var split = move[x].split(' ');
+        var space = split[0];
+        var direction = split[1];
+        console.log(space, typeof(+space));
+        if (typeof(+space) !== 'number') {
+            space = space.slice(1);
+        }
+        space = 63 - (+space);
+        var row = Math.floor(space / 8);
+        var column = space % 8;
+        console.log(row, column);
+        moves.push(`${row}-${column} ${direction}`)
+    }
+return moves
+}

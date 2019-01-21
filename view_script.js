@@ -67,34 +67,34 @@ $('document').ready(function(){
     }
 
 	function createBoard() {
-    var board = '';
-    for (var i = 0; i < 8; i++) {
-        board += "<tr>";
-        for (var x = 0; x < 8; x++) {
-            var id = i.toString() + "-" + x.toString();
-            if (traps.indexOf(id) !== -1) {
-                board += "<td data-status='not-selected' class='trap' id='" + id + "'></td>"
-            } else {
-                if(x==0){
-                    board+="<td id='label-rows-"+i+"' class='label-cell right-border'>"+(8-parseInt(i)).toString()+"</td>"
+        var board = '';
+        for (var i = 0; i < 8; i++) {
+            board += "<tr>";
+            for (var x = 0; x < 8; x++) {
+                var id = i.toString() + "-" + x.toString();
+                if (traps.indexOf(id) !== -1) {
+                    board += "<td data-status='not-selected' class='trap' id='" + id + "'></td>"
+                } else {
+                    if(x==0){
+                        board+="<td id='label-rows-"+i+"' class='label-cell right-border'>"+(8-parseInt(i)).toString()+"</td>"
+                    }
+                    board += "<td data-status='not-selected' id='" + id + "'></td>"
                 }
-                board += "<td data-status='not-selected' id='" + id + "'></td>"
+            }
+            board += "</tr>";
+        }
+        board+="<tr>"
+        for (var d=0; d<9; d++){
+            if (d===0){
+                board+="<td class='label-cell'></td>"
+            }
+            else{
+                board+="<td id='label-cols-"+String.fromCharCode(64+d)+"' class='label-cell top-border'>"+String.fromCharCode(64+d)+"</td>"
             }
         }
-        board += "</tr>";
-    }
-    board+="<tr>"
-    for (var d=0; d<9; d++){
-        if (d===0){
-            board+="<td class='label-cell'></td>"
-        }
-        else{
-            board+="<td id='label-cols-"+String.fromCharCode(64+d)+"' class='label-cell top-border'>"+String.fromCharCode(64+d)+"</td>"
-        }
-    }
-    board+="</tr>"
-    console.log(document.getElementById('view-board'))
-    document.getElementById('view-board').innerHTML = (board);
+        board+="</tr>"
+        console.log(document.getElementById('view-board'))
+        document.getElementById('view-board').innerHTML = (board);
 	}
 
     function createTable(){
@@ -104,7 +104,8 @@ $('document').ready(function(){
     	}
         table+="<tfoot><tr><td><button id='play-button'>></button></td></tr></tfoot>"
     	document.getElementById("view-moves").innerHTML=table;
-        document.getElementById("play-button").onclick=playMove;
+        var playButton=document.getElementById("play-button")
+        playButton.onclick=playMove;
         for (var b = 0; b < moves.length; b++) {
             var Id = "move-"+b
             document.getElementById(Id).onclick = function() {
@@ -221,8 +222,12 @@ $('document').ready(function(){
 
     function playMove(){
         var move=parseInt(currentMove.split("-")[1])+1;
+        if (move>=moves.length){
+            return;
+        }
         var steps=moves[move].split(",");
-        for (var e=0; e<steps.length; e++){
+        var e=0;
+        var playInterval=setInterval(function(){
             var step=steps[e];
             step=step.split(" ");
             var space=step[0]
@@ -264,11 +269,19 @@ $('document').ready(function(){
                 default:
                     throw new Error("No direction.")
             }
-            setTimeout(500)
-        }
-        document.getElementById(currentMove).classList.remove("selected-move")
-        currentMove="move-"+move;
-        document.getElementById(currentMove).classList.add("selected-move")
+            e+=1;
+            if (e>=steps.length){
+                clearInterval(playInterval);
+                document.getElementById(currentMove).classList.remove("selected-move")
+                currentMove="move-"+move;
+                document.getElementById(currentMove).classList.add("selected-move")
+                if (gameboard.toString()!==convertBoard(boards[move].split(",")).toString()){
+                    gameboard=convertBoard(boards[move].split(","));
+                    seed_board();
+                    throw new Error("Warning: board not matching!")
+                }
+            }
+            }, 500)
     }
     
 	var params=window.location.pathname.split("/")
