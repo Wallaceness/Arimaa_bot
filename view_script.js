@@ -206,7 +206,7 @@ $('document').ready(function(){
             var column = String.fromCharCode(65+parseInt(space.split("-")[1]));
             console.log(row, column);
             var piece = document.getElementById(row + '-' + column);
-            value.push(" "+column+"-"+row+" "+direction);
+            value.push(" "+column+"-"+row+" "+direction);//direction needs to be flipped
         }
         return value;
     }

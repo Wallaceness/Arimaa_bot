@@ -49,12 +49,13 @@ app.post(api+"/setup", function(request, response, next){
                 var x = eval(stdout);
                 response.json({board: x, id: id});
                 console.log("update 1", id)
-                Games.findById(id)
-                .then(function(game) {
-                    game.dataValues.moves.push([]);
-                    game.dataValues.board.push(stdout)
+                if (color==="silver"){
+                    game.dataValues.moves.push("Gold setup")
+                    game.dataValues.board.push(board)
+                }
+                    game.dataValues.moves.push(color.toUpperCase()+" setup");
+                    game.dataValues.board.push(x.toString())
                     game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board });
-                })
             }
         })
         })
@@ -70,7 +71,7 @@ app.post(`${api}/gameover`, function(request, response, next){
     Games.findById(id)
         .then(function(game) {
             game.dataValues.moves.push(move);
-            if (board !=='') game.dataValues.board.push(board);
+            if (board !=='') game.dataValues.board.push(board);//winner flipped for illegal moves
             console.log('game', game)
             game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board, winner: winner})
             response.sendStatus(200);
