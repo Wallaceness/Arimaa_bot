@@ -1,5 +1,4 @@
 #board-box{
-	float: right;
 	display: inline-block;
 }
 
@@ -10,12 +9,24 @@
 	margin: auto;
 }
 
+#view-moves tfoot{
+	border-top: 1px solid #777676;
+}
+
 #view-moves{
 	width: calc(100vw - 16px - (100vh - 83px));
+	max-width: 350px;
 	height: calc(100vh - 83px);
-	overflow: auto;
 	float: left;
 	border: 2px solid #777676;
+	border-collapse: collapse;
+}
+
+#moves-box{
+	display: inline-block;
+	height: calc(100vh - 83px);
+	overflow: scroll;
+	float: left;
 }
 
 #view-board td{
