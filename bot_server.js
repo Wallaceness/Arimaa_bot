@@ -53,7 +53,7 @@ app.post(api+"/setup", function(request, response, next){
                     game.dataValues.moves.push("Gold setup")
                     game.dataValues.board.push(board)
                 }
-                    game.dataValues.moves.push(color.toUpperCase()+" setup");
+                    game.dataValues.moves.push(color.slice(0, 1).toUpperCase()+color.slice(1)+" setup");
                     game.dataValues.board.push(x.toString())
                     game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board });
             }
@@ -150,6 +150,22 @@ function convertMove(move){
         var split = move[x].split(' ');
         var space = split[0];
         var direction = split[1];
+        switch(direction){
+            case "north":
+                direction="south"
+                break;
+            case "south":
+                direction="north";
+                break;
+            case "east":
+                direction="west";
+                break;
+            case "west":
+                direction="east";
+                break;
+            default:
+                throw new error("Invalid direction.")
+        }
         console.log(space, typeof(+space));
         if (typeof(+space) !== 'number') {
             space = space.slice(1);
@@ -160,5 +176,5 @@ function convertMove(move){
         console.log(row, column);
         moves.push(`${row}-${column} ${direction}`)
     }
-return moves
+    return moves
 }

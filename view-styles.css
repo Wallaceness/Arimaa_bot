@@ -11,8 +11,17 @@
 }
 
 #view-moves tfoot{
-	border-top: 1px solid #777676;
+	border: 2px solid #777676;
+	position: absolute;
+	bottom: 0;
+	height: 25px;
+	width: calc(100vw - 16px - (100vh - 83px));
+	max-width: 350px;
+	box-sizing: border-box;
 }
+/*#view-moves tbody{
+	height: calc(100vh - 108px);
+}*/
 
 #view-moves{
 	width: calc(100vw - 16px - (100vh - 83px));
@@ -20,6 +29,7 @@
 	height: calc(100vh - 83px);
 	float: left;
 	border: 2px solid #777676;
+	border-bottom: none;
 	border-collapse: collapse;
 }
 

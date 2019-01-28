@@ -193,6 +193,9 @@ $('document').ready(function(){
 
     function convertMove(move){
         var value=[]
+        if (move.indexOf("setup")!==-1){
+            return move
+        }
         move=move.split(",")
         for (var e=0; e<move.length; e++){
             var split = move[e].split(' ');
@@ -223,6 +226,14 @@ $('document').ready(function(){
     function playMove(){
         var move=parseInt(currentMove.split("-")[1])+1;
         if (move>=moves.length){
+            return;
+        }
+        if (moves[move].indexOf("setup")!==-1){
+            document.getElementById(currentMove).classList.remove("selected-move")
+            currentMove="move-"+move;
+            document.getElementById(currentMove).classList.add("selected-move")
+            gameboard=convertBoard(boards[move].split(","));
+            seed_board();
             return;
         }
         var steps=moves[move].split(",");
