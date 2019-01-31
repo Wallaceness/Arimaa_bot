@@ -1,5 +1,5 @@
 .games-link{
-    width: 20%;
+    width: calc(20% - 4px);
     display: inline-block;
     text-decoration: none;
     color: black;
@@ -7,4 +7,9 @@
 
 img{
 	width: 75%;
+}
+
+#games-list{
+	margin-left: 50px;
+	margin-right: 50px;
 }
