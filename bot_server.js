@@ -91,7 +91,7 @@ app.post(api+"/move", function(request, response, next){
         else if (stderr) response.send(stderr);
         else {
             var x = eval(stdout);
-                response.json({move: x[0]});
+                response.json({move: convertMove(x[0])});
                 console.log("update 2", id);
                 Games.findById(id)
                 .then(function(game) {

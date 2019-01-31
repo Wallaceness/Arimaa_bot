@@ -470,7 +470,7 @@ function submit(end) {
         moves = [];
         update_moves();
         if (gameover){
-            winner=other_color;
+            winner=color;
             return $.post("/api/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
                 console.log(data)
             })
@@ -541,31 +541,23 @@ function submit(end) {
                     var split = data.move[move].split(' ');
                     var space = split[0];
                     var direction = split[1];
-                    console.log(space, typeof(+space));
-                    if (typeof(+space) != 'number') {
-                        space = space.slice(1);
-                    }
-                    space = 63 - (+space);
-                    var row = Math.floor(space / 8);
-                    var column = space % 8;
-                    console.log(row, column);
-                    var piece = document.getElementById(row + '-' + column);
+                    var split2=space.split("-")
+                    var row=parseInt(split2[0])
+                    var column=parseInt(split2[1])
+                    var piece = document.getElementById(space);
                     toggle(piece);
                     var destination;
                     var tracker = count;
                     if (direction === "south") {
-                        destination = document.getElementById((row - 1) + '-' + column);
-                        previous_move.push(row+'-'+column+' north');
+                        destination = document.getElementById((row + 1) + '-' + column);
                     } else if (direction === "north") {
-                        destination = document.getElementById((row + 1) + '-' + column)
-                        previous_move.push(row+'-'+column+' south');
+                        destination = document.getElementById((row - 1) + '-' + column)
                     } else if (direction === "east") {
-                        destination = document.getElementById(row + '-' + (column - 1));
-                        previous_move.push(row+'-'+column+' west');
-                    } else if (direction === "west") {
                         destination = document.getElementById(row + '-' + (column + 1));
-                        previous_move.push(row+'-'+column+' east');
+                    } else if (direction === "west") {
+                        destination = document.getElementById(row + '-' + (column - 1));
                     }
+                    previous_move.push(space+' '+direction);
                     toggle(destination);
                     console.log(tracker, count);
                     if (count === tracker) {
