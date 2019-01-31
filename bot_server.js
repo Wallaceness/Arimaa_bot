@@ -95,7 +95,12 @@ app.post(api+"/move", function(request, response, next){
                 console.log("update 2", id);
                 Games.findById(id)
                 .then(function(game) {
-                    game.dataValues.moves.push(move);
+                    if (!move || move===""){
+                        game.dataValues.moves.push("Silver setup")
+                    }
+                    else{
+                        game.dataValues.moves.push(move);
+                    }
                     game.dataValues.moves.push(convertMove(x[0]).join(","));
                     if (board !=='') game.dataValues.board.push(board);
                     game.dataValues.board.push(x[1].toString());

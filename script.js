@@ -435,6 +435,12 @@ function submit(end) {
     if (gameover === true && !end) {
         return;
     }
+    else if (end){
+        winner=color;
+        return $.post("/api/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
+            console.log(data)
+        })
+    }
     if (count > 0 || swap) {
         count = 0;
         freeze = false;
@@ -469,13 +475,7 @@ function submit(end) {
         var winner=false;
         moves = [];
         update_moves();
-        if (gameover){
-            winner=color;
-            return $.post("/api/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
-                console.log(data)
-            })
-        }
-        else if (swap){
+        if (swap){
             return $.post('/api/setup', { color: color, board: gameboard.toString(), setup: true, move: m.toString(), id: game_id, winner: winner}, function(data) {
                 game_id=data.id;
                 var x=data.board

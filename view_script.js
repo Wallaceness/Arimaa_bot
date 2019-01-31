@@ -238,7 +238,12 @@ $('document').ready(function(){
         }
         var steps=moves[move].split(",");
         var e=0;
+        var g=0;
         var playInterval=setInterval(function(){
+            g+=1;
+            if (g>3){
+                clearInterval(playInterval);
+            }
             var step=steps[e];
             step=step.split(" ");
             var space=step[0]
