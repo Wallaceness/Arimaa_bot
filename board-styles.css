@@ -22,8 +22,12 @@ body {
     text-align: center;
     font-size: 10pt;
     margin-top: 0px;
+}
+
+#welcome span{
     background: rgba(236, 236, 236, 0.5);
     color: black;
+    background-size: auto;
 }
 
 #turn {

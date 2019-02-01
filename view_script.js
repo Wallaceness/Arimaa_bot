@@ -100,7 +100,7 @@ $('document').ready(function(){
     function createTable(){
     	var table=""
     	for (var y=0; y<moves.length; y++){
-    		table+="<tr><td id='move-"+y+"'>"+convertMove(moves[y])+"</td></tr>"
+    		table+="<tr id='move-"+y+"' class='"+(y%2==1?"silver-move":"gold-move")+"'><td class='right-border'>"+(Math.floor(y/2+1))+(y%2==1?"s":"g")+"</td><td><div class='left-padding'>"+convertMove(moves[y])+"</div></td></tr>"
     	}
         table+="<tfoot><tr><td><button id='play-button'>></button></td></tr></tfoot>"
     	document.getElementById("view-moves").innerHTML=table;
