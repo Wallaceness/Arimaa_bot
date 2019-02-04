@@ -52,10 +52,6 @@ body {
     padding: 2px;
 }
 
-
-/*#new-gold{position: absolute; left: 0%;}
-#new-silver{position: absolute; right: 0%;}*/
-
 #buttons {
     text-align: center;
     margin-top: 0px;
@@ -69,5 +65,10 @@ body {
 
 #all-games a{
     text-decoration: none;
-    font-size: 16pt;
+    font-size: 24pt;
+    color: blue;
+}
+
+#all-games:hover{
+    bottom: 10px;
 }

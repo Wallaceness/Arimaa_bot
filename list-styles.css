@@ -5,6 +5,16 @@
     color: black;
 }
 
+.games-link p{
+	width: 75%;
+	margin: auto;
+	margin-bottom: 20px;
+}
+
+.games-link h2{
+	margin-bottom: 20px;
+}
+
 img{
 	width: 75%;
 }

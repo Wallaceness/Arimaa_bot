@@ -118,7 +118,7 @@ app.get(`${api}/users/:userid`, function(request, response, next) {
             if (user) {
                 response.status = 201;
                 const games=user.games.map((game)=>{
-                    return {id: game.id, winner: game.winner, moves: Math.ceil(game.board.length/2) }
+                    return {id: game.id, winner: game.winner, moves: Math.ceil(game.board.length/2), time: game.createdAt}
                 })
                 response.json({userid: user.id, username: user.username, games: games});
             } else {
