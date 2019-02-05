@@ -1,3 +1,50 @@
+body {
+    background-image: url("./pictures/arimaa_board.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#moves-box{
+	display: inline-block;
+	float: left;
+}
+
+#moves-box div.table-footer{
+	border: 2px solid black;
+	position: absolute;
+	bottom: 0;
+	height: 25px;
+	width: calc(100vw - 20px - (100vh - 83px));
+	max-width: 346px;
+	background: white;
+	text-align: right;
+}
+
+.table-footer button{
+	height: 25px;
+	margin-left: 5px;
+	cursor: pointer;
+}
+
+#moves-box div.table-body{
+	max-height: calc(100vh - 88px);
+	overflow: auto;
+}
+
+#view-moves{
+	width: calc(100vw - 16px - (100vh - 83px));
+	min-height: calc(100vh - 88px)!important; 
+	max-width: 350px;
+	border: 2px solid black;
+	border-bottom: none;
+	border-collapse: collapse;
+}
+
+#view-moves td{
+	border-bottom: 2px solid black;
+	cursor: pointer;
+}
+
 #board-box{
 	display: inline-block;
 	min-width: calc(100vw - 366px);
@@ -8,37 +55,6 @@
 	width: calc(100vh - 83px);
 	border: none;
 	margin: auto;
-}
-
-#view-moves tfoot td{
-	/*border: 2px solid black;*/
-	position: absolute;
-	bottom: 0;
-	height: 25px;
-	width: calc(100vw - 16px - (100vh - 83px));
-	max-width: 350px;
-	box-sizing: border-box;
-}
-
-#view-moves{
-	width: calc(100vw - 16px - (100vh - 83px));
-	max-width: 350px;
-	height: calc(100vh - 83px);
-	float: left;
-	border: 2px solid black;
-	border-bottom: none;
-	border-collapse: collapse;
-}
-
-#view-moves td{
-	border-bottom: 2px solid black;
-}
-
-#moves-box{
-	display: inline-block;
-	height: calc(100vh - 83px);
-	overflow: scroll;
-	float: left;
 }
 
 #view-board td{
