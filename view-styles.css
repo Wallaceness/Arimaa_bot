@@ -1,21 +1,21 @@
-body {
+/*body {
     background-image: url("./pictures/arimaa_board.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-}
+}*/
 
 #moves-box{
 	display: inline-block;
 	float: left;
+	height: calc(100vh - 86px);
+	border: 2px solid black;
+	width: calc(100vw - 20px - (100vh - 83px));
+	max-width: 350px;
 }
 
-#moves-box div.table-footer{
-	border: 2px solid black;
-	position: absolute;
-	bottom: 0;
+div.table-footer{
+	border-top: 2px solid black;
 	height: 25px;
-	width: calc(100vw - 20px - (100vh - 83px));
-	max-width: 346px;
 	background: white;
 	text-align: right;
 }
@@ -27,16 +27,14 @@ body {
 }
 
 #moves-box div.table-body{
-	max-height: calc(100vh - 88px);
+	max-height: calc(100vh - 113px);
 	overflow: auto;
 }
 
 #view-moves{
-	width: calc(100vw - 16px - (100vh - 83px));
-	min-height: calc(100vh - 88px)!important; 
+	width: calc(100vw - 20px - (100vh - 83px));
+	min-height: calc(100vh - 86px)!important; 
 	max-width: 350px;
-	border: 2px solid black;
-	border-bottom: none;
 	border-collapse: collapse;
 }
 
@@ -47,7 +45,7 @@ body {
 
 #board-box{
 	display: inline-block;
-	min-width: calc(100vw - 366px);
+	min-width: calc(100vw - 370px);
 }
 
 #view-board{

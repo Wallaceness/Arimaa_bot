@@ -436,12 +436,28 @@ function submit(end) {
         return;
     }
     else if (end){
+        let m = [];
+        for (var step in moves) {
+            var s=moves[step];
+            var location=s[0];
+            var destination=s[1];
+            var l=location.split('-');
+            var lr=l[1];
+            var lc=l[0];
+            var d=destination.split('-');
+            var dc=d[0];
+            var dr=d[1];
+            if (+lr>+dr) m.push(location+" west");
+            else if (+lr<+dr) m.push(location+" east");
+            else if (+lc>+dc) m.push(location+" north");
+            else if (+lc<+dc) m.push(location+" south");
+        }
         winner=color;
         return $.post("/api/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
             console.log(data)
         })
     }
-    if (count > 0 || swap) {
+    else if (count > 0 || swap) {
         count = 0;
         freeze = false;
         computer_move = true;
@@ -564,6 +580,10 @@ function submit(end) {
                         alert("Bot has submitted an illegal move. You win by forfeit.");
                         gameover = true;
                         freeze = true;
+                        moves=[];
+                        var temp=color
+                        color=other_color
+                        other_color=temp
                         clearInterval(interval);
                         submit(true);
                         return;

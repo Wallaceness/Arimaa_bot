@@ -9,10 +9,11 @@
 	width: 75%;
 	margin: auto;
 	margin-bottom: 20px;
+	/*text-align: left;*/
 }
 
 .games-link h2{
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 }
 
 img{
@@ -22,4 +23,10 @@ img{
 #games-list{
 	margin-left: 50px;
 	margin-right: 50px;
+}
+
+@media (max-width: 800px){
+	.games-link{
+		width: calc(50% - 4px);
+	}
 }
