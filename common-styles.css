@@ -17,5 +17,5 @@
 }
 
 .arimaa-board td.trap {
-    background-color: grey;
+    background-color: grey!important;
 }

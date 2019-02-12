@@ -1,8 +1,8 @@
-/*body {
+body {
     background-image: url("./pictures/arimaa_board.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-}*/
+}
 
 #moves-box{
 	display: inline-block;
@@ -63,8 +63,9 @@ div.table-footer{
 #view-board td.label-cell{
 	border: none;
 	width: 5%;
-	width: 5%;
+	height: 5%;
 	text-align: center;
+	background: #eaeaea;
 }
 
 tr.selected-move{

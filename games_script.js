@@ -7,8 +7,8 @@ function createList(){
 		}).map(function(game){
 			var time=new Date(game.time)
 			return "<a class='games-link centered' href='/games/"+game.id+
-			"'><h2>Game # "+game.id+"</h2><p>"+"<label>Winner:</label> "+(game.winner?game.winner.slice(0, 1).toUpperCase()+game.winner.slice(1):"none")+"<br /><label>Moves:</label> "+game.moves+"<br />"+
-			convertTime(time)+"</p><img src='/pictures/board.jpeg'/></a>"
+			"'><h2>Game # "+game.id+"</h2><p>"+convertTime(time)+"<br /><label>Winner:</label> "+(game.winner?game.winner.slice(0, 1).toUpperCase()+game.winner.slice(1):"none")+"<br /><label>Moves:</label> "+game.moves+
+			"</p><img src='/pictures/board.jpeg'/></a>"
 		}).join("\n");
 		$("#games-list").html(listElement)
 	})
