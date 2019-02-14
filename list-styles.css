@@ -9,7 +9,14 @@
 	width: 75%;
 	margin: auto;
 	margin-bottom: 20px;
-	/*text-align: left;*/
+	text-align: justify;
+	line-height: 1.25;
+}
+
+.games-link > p > span:after {
+	content: "";
+    display: inline-block;
+    width: 100%;
 }
 
 .games-link h2{

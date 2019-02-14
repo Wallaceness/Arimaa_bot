@@ -223,11 +223,18 @@ $('document').ready(function(){
     }
 
     function playMove(){
-        var move=parseInt(currentMove.split("-")[1])+1;
+        var move=currentMove? parseInt(currentMove.split("-")[1])+1: null;
         if (move>=moves.length){
             return;
         }
-        if (moves[move].indexOf("setup")!==-1){
+        else if (!move){
+            currentMove="move-0";
+            document.getElementById(currentMove).classList.add("selected-move")
+            gameboard=convertBoard(boards[0].split(","));
+            seed_board();
+            return;
+        }
+        else if (moves[move].indexOf("setup")!==-1){
             document.getElementById(currentMove).classList.remove("selected-move")
             currentMove="move-"+move;
             document.getElementById(currentMove).classList.add("selected-move")
