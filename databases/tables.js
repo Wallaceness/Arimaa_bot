@@ -28,3 +28,4 @@ module.exports = {
     Game: Game,
     db: tables
 }
+//add a random comment to trigger a heroku redeploy.
