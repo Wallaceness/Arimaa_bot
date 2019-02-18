@@ -1,5 +1,5 @@
 var Sequelize = require("Sequelize");
-var tables = new Sequelize("postgres://localhost:5432/arimaa")
+var tables = new Sequelize(process.env.DATABASE_URL || "postgres://localhost:5432/arimaa")
 
 var User = tables.define('user', {
     username: {
@@ -28,4 +28,3 @@ module.exports = {
     Game: Game,
     db: tables
 }
-//add a random comment to trigger a heroku redeploy.
