@@ -1,4 +1,4 @@
-var Sequelize = require("Sequelize");
+var Sequelize = require("sequelize");
 var tables = new Sequelize(process.env.DATABASE_URL || "postgres://localhost:5432/arimaa")
 
 var User = tables.define('user', {
