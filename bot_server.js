@@ -25,6 +25,7 @@ app.get('/', function(request, response, next) {
 })
 
 app.post(api+"/setup", function(request, response, next){
+    console.log("In the server:", database, Users, Games)
     var color = request.body.color;
     var board = request.body.board;
     var setup = request.body.setup;
