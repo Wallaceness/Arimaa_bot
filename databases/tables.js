@@ -2,14 +2,14 @@ var Sequelize = require("sequelize");
 var tables = new Sequelize(process.env.DATABASE_URL || "postgres://localhost:5432/arimaa")
 
 
-var Users = tables.define('user', {
+var Users = tables.define('users', {
     username: {
         type: Sequelize.STRING,
         allowNull: false,
     }
 })
 
-var Games = tables.define('game', {
+var Games = tables.define('games', {
     winner: {
         type: Sequelize.STRING,
     },
