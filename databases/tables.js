@@ -2,14 +2,14 @@ var Sequelize = require("sequelize");
 var tables = new Sequelize(process.env.DATABASE_URL || "postgres://localhost:5432/arimaa")
 
 
-var User = tables.define('user', {
+var Users = tables.define('user', {
     username: {
         type: Sequelize.STRING,
         allowNull: false,
     }
 })
 
-var Game = tables.define('game', {
+var Games = tables.define('game', {
     winner: {
         type: Sequelize.STRING,
     },
@@ -21,11 +21,11 @@ var Game = tables.define('game', {
     }
 })
 
-User.hasMany(Game);
-Game.belongsTo(User);
+Users.hasMany(Games);
+Games.belongsTo(Users);
 
 module.exports = {
-    User: User,
-    Game: Game,
+    Users: Users,
+    Games: Games,
     db: tables
 }

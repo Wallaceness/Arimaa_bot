@@ -4,8 +4,8 @@ var bodyparser = require('body-parser');
 var app = express();
 var database = require("./databases/tables");
 const path=require("path");
-var Users = database.User;
-var Games = database.Game;
+var Users = database.Users;
+var Games = database.Games;
 console.log("In the server:", database, Users, Games)
 
 const api="/api"
