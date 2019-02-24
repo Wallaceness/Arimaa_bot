@@ -24,13 +24,21 @@ var Games = tables.define('games', {
 Users.hasMany(Games);
 Games.belongsTo(Users);
 
-db.sync({ force: true })
+Users.findByID(1)
+.then((user)=>{
+    console.log(user)
+})
+.catch(error)=>{
+    console.log("error", error)
+    tables.sync({ force: true })
     .then(function() {
         console.log("Hello world.")
         User.create({
             username: 'Nathan'
         })
     })
+}
+
 
 module.exports = {
     Users: Users,
