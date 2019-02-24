@@ -1,4 +1,4 @@
-var Tables = require("./tables");
+var Tables = require("./databases/tables");
 var db = Tables.db;
 var User = Tables.Users;
 var Game = Tables.Games;
