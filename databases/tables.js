@@ -24,6 +24,14 @@ var Games = tables.define('games', {
 Users.hasMany(Games);
 Games.belongsTo(Users);
 
+db.sync({ force: true })
+    .then(function() {
+        console.log("Hello world.")
+        User.create({
+            username: 'Nathan'
+        })
+    })
+
 module.exports = {
     Users: Users,
     Games: Games,
