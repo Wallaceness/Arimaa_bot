@@ -44,6 +44,8 @@ function start(color_choice) {
     swap = true;
     var gold = document.getElementById('gold');
     var silver = document.getElementById('silver');
+    document.getElementById("new-gold").disabled=true;
+    document.getElementById("new-silver").disabled=true;
     if (silver) {
         document.getElementById('turn').removeChild(silver);
     } else if (gold) {
@@ -452,6 +454,8 @@ function submit(end) {
             else if (+lc>+dc) m.push(location+" north");
             else if (+lc<+dc) m.push(location+" south");
         }
+        document.getElementById("new-silver").disabled=false;
+        document.getElementById("new-gold").disabled=false;
         winner=color;
         return $.post("/api/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
             console.log(data)

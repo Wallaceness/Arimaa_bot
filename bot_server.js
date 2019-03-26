@@ -6,7 +6,7 @@ var database = require("./databases/tables");
 const path=require("path");
 var Users = database.Users;
 var Games = database.Games;
-console.log("In the server:", process.env.DATABASE_URL)
+
 
 const api="/api"
 
@@ -37,7 +37,7 @@ app.post(api+"/setup", function(request, response, next){
         promise1=Games.create({ moves: [], board: [], userId: 1 }) 
     }
     else{
-        promise1=promise.resolve(true)
+        promise1=Promise.resolve(true)
     }
     promise1
         .then(function(game) {
