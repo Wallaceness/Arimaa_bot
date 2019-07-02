@@ -21,7 +21,14 @@ app.listen(port, function() {
 
 app.get('/', function(request, response, next) {
     console.log("get received!");
-    response.sendFile(path.join(__dirname,'board.html'));
+    response.sendFile(path.join(__dirname,'homepage.html'));
+})
+
+app.post(`${api}/new`, function(request, response, next){
+    Games.create({ moves: [], board: [], userId: 1 })
+    .then((game)=>{
+        response.json({id: game.id})
+    })
 })
 
 app.post(api+"/setup", function(request, response, next){
@@ -32,18 +39,9 @@ app.post(api+"/setup", function(request, response, next){
     var move = request.body.move;
     var id = request.body.id;
     var winner=request.body.winner;
-    promise1=null;
-    if(!id || id===""){
-        promise1=Games.create({ moves: [], board: [], userId: 1 }) 
-    }
-    else{
-        promise1=Promise.resolve(true)
-    }
-    promise1
-        .then(function(game) {
-            id = game.id;
-            console.log("game created", id);
-            child_process.exec("python ./arimaa_bot/shell_for_bot.py " + color + " " + board + " " + setup, function(error, stdout, stderr) {
+    Games.findById(id)
+    .then((game)=>{
+        child_process.exec("python ./arimaa_bot/shell_for_bot.py " + color + " " + board + " " + setup, function(error, stdout, stderr) {
             console.log(error, stdout, stderr)
             if (error) response.send(error);
             else if (stderr) response.send(stderr);
@@ -60,7 +58,7 @@ app.post(api+"/setup", function(request, response, next){
                     game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board });
             }
         })
-        })
+    })
 })
 
 app.post(`${api}/gameover`, function(request, response, next){
@@ -148,7 +146,15 @@ app.get(`${api}/games/:gameid`, function(request, response, next){
 })
 
 app.get('/games/:gameid', function(request, response, next) {
-    response.sendFile(path.join(__dirname, "view_game.html"))
+    Games.findById(request.params.gameid)
+    .then(function(game){
+        if (game.winner){
+            response.sendFile(path.join(__dirname, "view_game.html"))
+        }
+        else{
+            response.sendFile(path.join(__dirname,'board.html'));
+        }
+    })
 })
 
 function convertMove(move){

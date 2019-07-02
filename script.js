@@ -13,6 +13,7 @@ var gameboard = [
 var traps = ['2-2', '2-5', '5-2', '5-5'];
 var color = 'gold';
 var other_color = 'silver';
+var play_as;
 var pieces = {
     'gold': ['R', 'C', 'D', 'H', 'M', 'E'],
     'silver': ['r', 'c', 'd', 'h', 'm', 'e']
@@ -25,7 +26,7 @@ var moves = [];
 var swap = true;
 var gameover = false;
 var computer_move = false;
-var game_id = null;
+var game_id = window.location.pathname.split("/")[2]
 var previous_move=null;
 
 function start(color_choice) {
@@ -263,37 +264,37 @@ function seed_space(space) {
         space.style.backgroundImage = "none";
         space.style.opacity = 1;
     } else if (board == 'e' || board == 'E') {
-        space.style.backgroundImage = "url(./pictures/elephant.jpg)"
+        space.style.backgroundImage = "url(../pictures/elephant.jpg)"
         space.style.backgroundSize = "cover";
         // if (board=='e'){
         // 	space.style.border="5px solid silver";
         // }
     } else if (board == 'm' || board == 'M') {
-        space.style.backgroundImage = "url(./pictures/camel.jpg)"
+        space.style.backgroundImage = "url(../pictures/camel.jpg)"
         space.style.backgroundSize = "cover";
         // if (board=='m'){
         // 	space.style.opacity=0.5;
         // }
     } else if (board == 'h' || board == 'H') {
-        space.style.backgroundImage = "url(./pictures/horse.png)"
+        space.style.backgroundImage = "url(../pictures/horse.png)"
         space.style.backgroundSize = "cover";
         // if (board=='h'){
         // 	space.style.opacity=0.5;
         // }
     } else if (board == 'd' || board == 'D') {
-        space.style.backgroundImage = "url(./pictures/dog.jpg)"
+        space.style.backgroundImage = "url(../pictures/dog.jpg)"
         space.style.backgroundSize = "cover";
         // if (board=='d'){
         // 	space.style.opacity=0.5;
         // }
     } else if (board == 'c' || board == 'C') {
-        space.style.backgroundImage = "url(./pictures/cat.jpg)"
+        space.style.backgroundImage = "url(../pictures/cat.jpg)"
         space.style.backgroundSize = "cover";
         // if (board=='c'){
         // 	space.style.opacity=0.5;
         // }
     } else if (board == 'r' || board == 'R') {
-        space.style.backgroundImage = "url(./pictures/rabbit.jpg)"
+        space.style.backgroundImage = "url(../pictures/rabbit.jpg)"
         space.style.backgroundSize = "cover";
         // if (board=='r'){
         // 	space.style.opacity=0.5;
@@ -454,8 +455,6 @@ function submit(end) {
             else if (+lc>+dc) m.push(location+" north");
             else if (+lc<+dc) m.push(location+" south");
         }
-        document.getElementById("new-silver").disabled=false;
-        document.getElementById("new-gold").disabled=false;
         winner=color;
         return $.post("/api/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
             console.log(data)
@@ -471,9 +470,10 @@ function submit(end) {
         } else {
             color = 'gold';
             other_color = 'silver';
-            if (game_id && swap){
+            if (play_as==='silver'){
                 swap=false;
             }
+            else play_as='silver';
         }
         change_color();
         let m = [];
