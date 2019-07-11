@@ -74,6 +74,8 @@ function start(color_choice) {
     }
 }
 
+
+
 function change_color() {
     let div = document.createElement('div');
     let turn;
@@ -246,7 +248,19 @@ function two_things() {
             };
         }
     }
-    seed_board();
+    console.log(window.location.pathname.split("/"))
+    $.get("/api/lastmove/"+window.location.pathname.split("/")[2], function(response){
+        if (response.board){
+            gameboard=convertBoard(response.board.split(","));
+            document.getElementById("new-gold").disabled=true;
+            document.getElementById("new-silver").disabled=true;
+            swap=false;
+            color=response.color;
+            change_color();
+        }
+        seed_board();
+    })
+
 }
 
 function seed_space(space) {
@@ -644,4 +658,23 @@ function undo() {
         []
     ];
     update_moves();
+}
+
+function convertBoard(board){
+    var new_board = [];
+            count = 0;
+            var sub = [];
+            for (var c=0; c<board.length; c++) {
+                count += 1;
+                if (board[c] === " ") {
+                    board[c] = ''
+                }
+                sub.push(board[c])
+                if (count === 8) {
+                    new_board.push(sub);
+                    sub = [];
+                    count = 0;
+                }
+            }
+            return new_board;
 }

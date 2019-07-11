@@ -31,6 +31,15 @@ app.post(`${api}/new`, function(request, response, next){
     })
 })
 
+app.get(`${api}/lastmove/:gameid`, function(request, response, next){
+    Games.findById(request.params.gameid)
+    .then((game)=>{
+        //if the board array has an odd number of boards, that means the last move was Gold's and therefore it is Silver's turn.
+        let color=((game.dataValues.board.length%2===1) ? "silver" : "gold");
+        response.json({id: game.dataValues.id, board: game.dataValues.board[game.dataValues.board.length-1] || null, color: color})
+    })
+})
+
 app.post(api+"/setup", function(request, response, next){
     console.log("In the server:", database, Users, Games)
     var color = request.body.color;
