@@ -7,11 +7,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js">
     </script>
     <script src="/script.js"></script>
-    <script>
-    window.onload = function() {
-        two_things();
-    }
-    </script>
 </head>
 
 <body>
@@ -19,8 +14,8 @@
         <h1 id="title">Arimaa: The Game of True Intelligence </h1>
         <p id="welcome"><span>Welcome! This is the boardgame Arimaa, and you are about to play a very basic bot. To start, select which color to play as. If you don't know the rules yet, follow <a href="https://en.wikipedia.org/wiki/Arimaa"> this link</a> to learn!</span></p>
         <div id="buttons">
-            <button id="new-gold" onclick="start('gold')">Play as Gold</button>
-            <button id="new-silver" onclick="start('silver')">Play as Silver</button>
+            <button id="new-gold">Play as Gold</button>
+            <button id="new-silver">Play as Silver</button>
             <a href="/users/1"><button>View All Games</button></a>
         </div>
     </div>
@@ -31,8 +26,8 @@
         </table>
     </div>
     <div id="submit_undo">
-        <button id="submit" onclick="submit()">Submit Move</button>
-        <button id="undo" onclick="undo()">Undo</button>
+        <button id="submit">Submit Move</button>
+        <button id="undo">Undo</button>
     </div>
 </body>
 

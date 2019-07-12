@@ -32,11 +32,11 @@ app.post(`${api}/new`, function(request, response, next){
 })
 
 app.get(`${api}/lastmove/:gameid`, function(request, response, next){
-    Games.findById(request.params.gameid)
+    Games.findByPk(request.params.gameid)
     .then((game)=>{
         //if the board array has an odd number of boards, that means the last move was Gold's and therefore it is Silver's turn.
         let color=((game.dataValues.board.length%2===1) ? "silver" : "gold");
-        response.json({id: game.dataValues.id, board: game.dataValues.board[game.dataValues.board.length-1] || null, color: color})
+        response.json({id: game.dataValues.id, board: game.dataValues.board[game.dataValues.board.length-1] || null, color: color, setup: game.dataValues.moves.length<2 ? true: false} )
     })
 })
 
@@ -48,7 +48,7 @@ app.post(api+"/setup", function(request, response, next){
     var move = request.body.move;
     var id = request.body.id;
     var winner=request.body.winner;
-    Games.findById(id)
+    Games.findByPk(id)
     .then((game)=>{
         child_process.exec("python ./arimaa_bot/shell_for_bot.py " + color + " " + board + " " + setup, function(error, stdout, stderr) {
             console.log(error, stdout, stderr)
@@ -64,7 +64,7 @@ app.post(api+"/setup", function(request, response, next){
                 }
                     game.dataValues.moves.push(color.slice(0, 1).toUpperCase()+color.slice(1)+" setup");
                     game.dataValues.board.push(x.toString())
-                    game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board });
+                    game.update({ moves: game.dataValues.moves, board: game.dataValues.board });
             }
         })
     })
@@ -77,12 +77,12 @@ app.post(`${api}/gameover`, function(request, response, next){
     var move = request.body.move;
     var id = request.body.id;
     var winner=request.body.winner;
-    Games.findById(id)
+    Games.findByPk(id)
         .then(function(game) {
             if (move && move!=='')game.dataValues.moves.push(move);
             if (board !=='') game.dataValues.board.push(board);
             console.log('game', game)
-            game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board, winner: winner})
+            game.update({ moves: game.dataValues.moves, board: game.dataValues.board, winner: winner})
             response.sendStatus(200);
         })
 })
@@ -102,7 +102,7 @@ app.post(api+"/move", function(request, response, next){
             var x = eval(stdout);
                 response.json({move: convertMove(x[0])});
                 console.log("update 2", id);
-                Games.findById(id)
+                Games.findByPk(id)
                 .then(function(game) {
                     if (!move || move===""){
                         game.dataValues.moves.push("Silver setup")
@@ -114,7 +114,7 @@ app.post(api+"/move", function(request, response, next){
                     if (board !=='') game.dataValues.board.push(board);
                     game.dataValues.board.push(x[1].toString());
                     console.log('game', game)
-                    game.updateAttributes({ moves: game.dataValues.moves, board: game.dataValues.board});
+                    game.update({ moves: game.dataValues.moves, board: game.dataValues.board});
                 })
         }
     })
@@ -142,7 +142,7 @@ app.get("/users/:userid", function(request, response, next){
 })
 
 app.get(`${api}/games/:gameid`, function(request, response, next){
-    Games.findById(request.params.gameid)
+    Games.findByPk(request.params.gameid)
         .then(function(game) {
             if (game) {
                 response.status = 201;
@@ -155,7 +155,7 @@ app.get(`${api}/games/:gameid`, function(request, response, next){
 })
 
 app.get('/games/:gameid', function(request, response, next) {
-    Games.findById(request.params.gameid)
+    Games.findByPk(request.params.gameid)
     .then(function(game){
         if (game.winner){
             response.sendFile(path.join(__dirname, "view_game.html"))
