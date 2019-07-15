@@ -193,7 +193,7 @@ $('document').ready(function(){
                 setup_move(id, s_id, adjacents, s_location, location, space);
                 selected = null;
                 return;
-            } else if (swap === false && gameboard[id[0]][id[2]] == '' && adjacents.indexOf(id) !== -1 && pushes.length == 1) {
+            } else if (swap === false && gameboard[id[0]][id[2]] == '' && adjacents.indexOf(id) !== -1 && pushes.length === 1) {
                 if (last_move) {
                     var last = gameboard[+last_move[1][0]][+last_move[1][2]];
                     console.log(pieces[color].indexOf(last) > pieces[other_color].indexOf(s_location));
@@ -258,6 +258,7 @@ $('document').ready(function(){
                 document.getElementById("new-silver").disabled=true;
                 swap=response.setup;
                 color=response.color;
+                other_color=color==="gold"? "silver": "gold";
                 change_color();
             }
             seed_board();
@@ -681,6 +682,26 @@ $('document').ready(function(){
                 }
                 return new_board;
     }
+
+    function convertDirection(space, direction){
+        switch(direction){
+                    case 'north':{
+                        return parseInt(space[0])-1+"-"+space[2];
+                    }
+                    case 'south':{
+                        return parseInt(space[0])+1+"-"+space[2];
+                    }
+                    case 'east':{
+                        return parseInt(space[0])+"-"+parseInt(space[2])+1;
+                    }
+                    case 'west':{
+                        return parseInt(space[0])+"-"+parseInt(space[2])-1;
+                    }
+                    default:
+                        throw new Error("No direction.")
+                }
+    }
+
     two_things();
     document.getElementById('new-gold').onclick=function(){
         start('gold')

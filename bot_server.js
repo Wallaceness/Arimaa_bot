@@ -36,7 +36,12 @@ app.get(`${api}/lastmove/:gameid`, function(request, response, next){
     .then((game)=>{
         //if the board array has an odd number of boards, that means the last move was Gold's and therefore it is Silver's turn.
         let color=((game.dataValues.board.length%2===1) ? "silver" : "gold");
-        response.json({id: game.dataValues.id, board: game.dataValues.board[game.dataValues.board.length-1] || null, color: color, setup: game.dataValues.moves.length<2 ? true: false} )
+        response.json({
+            id: game.dataValues.id, 
+            board: game.dataValues.board[game.dataValues.board.length-1] || null, 
+            color: color, 
+            setup: game.dataValues.moves.length<2 ? true: false 
+        } );
     })
 })
 
