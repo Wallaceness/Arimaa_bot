@@ -131,7 +131,7 @@ $('document').ready(function(){
     }
 
     function seed_space(space) {
-        space.style.border = "5px solid black";
+        space.style.border = "2px solid black";
         var id = space.id;
         if (trap_check(space) === true) {
             var record = [id, gameboard[id[0]][id[2]]];
@@ -164,10 +164,10 @@ $('document').ready(function(){
             space.style.backgroundSize = "cover";
         }
         if (pieces.silver.indexOf(board) !== -1) {
-            space.style.border = "5px solid silver";
+            space.style.border = "2px solid silver";
         }
         if (pieces.gold.indexOf(board) !== -1) {
-            space.style.border = "5px solid gold";
+            space.style.border = "2px solid gold";
         }
     }
 

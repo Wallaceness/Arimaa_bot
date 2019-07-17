@@ -259,6 +259,14 @@ $('document').ready(function(){
                 swap=response.setup;
                 color=response.color;
                 other_color=color==="gold"? "silver": "gold";
+                if (response.setup){
+                    play_as="silver"
+                    gameboard = gameboard.slice(2);
+                    gameboard.unshift(['c', 'h', 'd', 'm', 'e', 'd', 'h', 'c']);
+                    gameboard.unshift(['r', 'r', 'r', 'r', 'r', 'r', 'r', 'r']);
+                    console.log(gameboard);
+                    seed_board();
+                }
                 change_color();
             }
             seed_board();
@@ -476,7 +484,9 @@ $('document').ready(function(){
             winner=color;
             return $.post("/api/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
                 console.log(data)
+                document.getElementById("game-over").style.display="block"
             })
+
         }
         else if (count > 0 || swap) {
             count = 0;

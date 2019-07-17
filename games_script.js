@@ -23,4 +23,9 @@ function convertTime(time){
 
 $('document').ready(function(){
 	createList();
+	document.getElementById("new-game-button").onclick=function(){
+		$.post("/api/new", {}, function(response){
+            window.location="/games/"+response.id;
+        })
+	}
 })

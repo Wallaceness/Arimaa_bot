@@ -53,11 +53,17 @@ div.table-footer{
 	width: calc(100vh - 83px);
 	border: none;
 	margin: auto;
+	background: transparent!important;
+	border-collapse: separate!important;
+	box-sizing: border-box;
 }
 
 #view-board td{
 	height: 11.875%;
 	width: 11.875%;
+	background: white;
+	border: 2px solid black;
+	box-sizing: border-box;
 }
 
 #view-board td.label-cell{
@@ -66,6 +72,7 @@ div.table-footer{
 	height: 5%;
 	text-align: center;
 	background: #eaeaea;
+	background: transparent;
 }
 
 tr.selected-move{
@@ -87,4 +94,24 @@ tr.selected-move{
 
 .silver-move{
 	background: silver;
+}
+
+#back-button{
+	height: 37px;
+    position: absolute;
+    width: 100%;
+    top: 14px;
+    right: 8px;
+}
+
+#back-button a{
+	float: right;
+}
+
+#back-button a button{
+	padding: 5px;
+	border-radius: 5px;
+	cursor: pointer;
+	background: transparent;
+	border: 1px solid black;
 }

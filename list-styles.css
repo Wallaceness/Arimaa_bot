@@ -30,6 +30,24 @@ img{
 #games-list{
 	margin-left: 50px;
 	margin-right: 50px;
+	clear: both;
+}
+
+#new-game-button{
+	/*background-color: #03b903;*/
+	/*font-size: 12pt;*/
+	padding: 5px;
+	border-radius: 5px;
+	cursor: pointer;
+	float: right;
+	margin-right: 50px;
+}
+
+#button-belt{
+	position: absolute;
+	width: 100%;
+	top: 15px;
+	right: 8px;
 }
 
 @media (max-width: 800px){

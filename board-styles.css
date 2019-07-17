@@ -77,3 +77,18 @@ body {
     bottom: 10px;
     background: rgba(255, 255, 255, .55);
 }
+
+#game-over{
+    position: absolute;
+    margin: auto;
+    font-size: 16pt;
+    color: red;
+    top: calc(50% - 12px);
+    width: 100%;
+    text-align: center;
+    display: none;
+}
+
+#game-over span{
+    background: white;
+}
