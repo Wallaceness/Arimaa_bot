@@ -108,6 +108,8 @@ def bot(color, position, setup=False):
                         #if color=="silver":
                          #   if space==location+8:
                           #      continue
+                        if (color=="gold" and position[location]=="R" and space==location-8) or (color=="silver" and position[location]=="r" and space==location+8):
+                            continue
                         move(position, location, space)
                         final_move.append(str(location)+" "+direction_finder(location, space))
                         steps-=1
