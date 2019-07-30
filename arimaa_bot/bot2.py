@@ -1,4 +1,4 @@
- #MY FIRST ATTEMPT AT MAKING AN ARIMAA ENGINE!!!!!!
+#MY FIRST ATTEMPT AT MAKING AN ARIMAA ENGINE!!!!!!
 start_position=[' ',' ',' ',' ',' ',' ',' ',' ',\
                 ' ',' ',' ',' ',' ',' ',' ',' ',\
                 ' ',' ',' ',' ',' ',' ',' ',' ',\
@@ -616,24 +616,54 @@ def copy_position(position):
         copy[number]=position[number]
     return copy
 
+def copy_final_move(final_move):
+    copy=[]
+    for number in range(0, len(final_move)):
+        copy.append(final_move[number])
+    return copy
+
+def update_possibilities(position):
+    global possible_moves
+    possible_moves={}
+    for number in range(0,64):
+        if position[number] in pieces:
+            possibilities(position, number, possible_moves)
+        if position[number] in enemy_pieces:
+            enemy_possibilities(position, number, enemy_possible_moves)
 
 def planner(position, final_move):
     if goal_search(position, final_move):
         return
     enemy_goal_search(position, final_move)
+    position_update=copy_position(position)
+    move_copy=copy_final_move(final_move)
+    submit_move(position_update, move_copy)
+    update_possibilities(position_update)
     on_targets, off_targets, targets2, on_threats, off_threats, threats2=capture_search(position)
     if len(final_move)<4:
-        on_trap_captures(position, final_move, on_targets, 4-len(final_move))
+        on_trap_captures(position_update, final_move, on_targets, 4-len(final_move))
+        position_update=copy_position(position)
+        move_copy=copy_final_move(final_move)
+        submit_move(position_update, move_copy)
+        update_possibilities(position_update)
     if len(final_move)==0:
         off_trap_captures(position, final_move, off_targets)
     if len(final_move)==0:
         two_trap_captures(position, final_move, targets2)
     if len(final_move)<4:
-        on_trap_defense(position, final_move, on_threats, 4-len(final_move))
+        on_trap_defense(position_update, final_move, on_threats, 4-len(final_move))
+        position_update=copy_position(position)
+        move_copy=copy_final_move(final_move)
+        submit_move(position_update, move_copy)
+        update_possibilities(position_update)
     if len(final_move)<4:
-        off_trap_defense(position, final_move, off_threats, 4-len(final_move))
+        off_trap_defense(position_update, final_move, off_threats, 4-len(final_move))
+        position_update=copy_position(position)
+        move_copy=copy_final_move(final_move)
+        submit_move(position_update, move_copy)
+        update_possibilities(position_update)
     if len(final_move)<4:
-        two_trap_defense(position, final_move, threats2, 4-len(final_move))
+        two_trap_defense(position_update, final_move, threats2, 4-len(final_move))
     return
 
 
