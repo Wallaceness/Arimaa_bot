@@ -99,6 +99,9 @@ app.post(api+"/move", function(request, response, next){
     var move = request.body.move;
     var id = request.body.id;
     var winner=request.body.winner;
+    if (checkEndgame(board)){
+        response.send(color + " wins!")
+    }
     child_process.exec("python ./arimaa_bot/shell_for_bot.py " + color + " " + board + " " + setup, function(error, stdout, stderr) {
         console.log(error, stdout, stderr)
         if (error) response.send(error);
@@ -118,7 +121,7 @@ app.post(api+"/move", function(request, response, next){
                     game.dataValues.moves.push(convertMove(x[0]).join(","));
                     if (board !=='') game.dataValues.board.push(board);
                     game.dataValues.board.push(x[1].toString());
-                    console.log('game', game)
+                    // console.log('game', game)
                     game.update({ moves: game.dataValues.moves, board: game.dataValues.board});
                 })
         }
@@ -204,4 +207,144 @@ function convertMove(move){
         moves.push(`${row}-${column} ${direction}`)
     }
     return moves
+}
+
+function checkEndgame(board){
+    //check rabbits
+    board=board.split(",");
+    let rabbits=0;
+    let Rabbits=0;
+    board.forEach((space)=>{
+        if(space==="r"){
+            rabbits+=1;
+        }
+        else if(space==="R"){
+            Rabbits+=1;
+        }
+    });
+    if (rabbits===0){
+        console.log( "Gold wins!")   
+    }
+    else if (Rabbits===0){
+        console.log( "Silver wins!")
+    }
+    //check goal
+    for (let x=0, length=board.length-1; x<8; x++){
+        if (board[x]==='R'){
+            console.log( "Gold wins!")       
+        }
+        else if (board[length-x]==='r'){
+            console.log( "Silver wins!")
+        }
+    }
+    let immobilized=checkMoves(board, "Gold");
+    console.log("IM", immobilized);
+    console.log("board", board);
+    return false
+}
+
+function checkMoves(board, color){
+    let ranks={"R":1, "C":2, "D":3, H: 4, M: 5, E: 6};
+    let immobilizedGold=true;
+    let immobilizedSilver=true;
+    for (let x=0, length=board.length; x<length; x++){
+        if (board[x]!==""){
+            let adjacents=adjacent(x);
+            if (ranks[board[x]]){
+                //gold piece
+                let piece=ranks[board[x]];
+                let frozen=false;
+                for (let a=0; a<adjacents.length; a++){
+                    if (ranks[board[adjacents[a]]]){
+                        frozen=false;
+                        break;
+                    }
+                    else if(board[adjacents[a]]!=="" && ranks[board[adjacents[a]].toUpperCase()] && ranks[board[adjacents[a]].toUpperCase()] > piece){
+                        frozen=true;
+                    }
+                }
+                if (!frozen){
+                    for (let b=0; b<adjacents.length; b++){
+                        if (board[adjacents[b]]===""){
+                            immobilizedGold=false;
+                            break;
+                        }
+                        else if (ranks[board[adjacents[a]].toUpperCase()]){
+                            let adjacents2=adjacent(adjacents[b]);
+                            let br=false;
+                            adjacents2.splice(adjacents2.indexOf(x), 1);
+                            for (let c=0; c<adjacents2.length; c++){
+                                if (board[adjacents2[c]]===""){
+                                    immobilizedGold=false;
+                                    br=true;
+                                    break;
+                                }
+                            }
+                            if (br) break
+                        }
+                    }
+                }
+            }
+            else{
+                //silver piece
+                let adjacents=adjacent(x);
+                let piece=ranks[board[x].toUpperCase()];
+                let frozen=false;
+                for (let a=0; a<adjacents.length; a++){
+                    if (board[adjacents[a]]!=="" && !ranks[board[adjacents[a]]]){
+                        frozen=false;
+                        break;
+                    }
+                    else if(ranks[board[adjacents[a]]] && ranks[board[adjacents[a]]] > piece){
+                        frozen=true;
+                    }
+                }
+                if (!frozen){
+                    for (let b=0; b<adjacents.length; b++){
+                        if (board[adjacents[b]]===""){
+                            immobilizedSilver=false;
+                            break;
+                        }
+                        else if (ranks[board[adjacents[a]]]){
+                            let adjacents2=adjacent(adjacents[b]);
+                            let br=false;
+                            adjacents2.splice(adjacents2.indexOf(x), 1);
+                            for (let c=0; c<adjacents2.length; c++){
+                                if (board[adjacents2[c]]===""){
+                                    immobilizedSilver=false;
+                                    br=true;
+                                    break;
+                                }
+                            }
+                            if (br) break
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (color==="Silver" && immobilizedSilver){
+        return "Gold Wins!";
+    }
+    else if (color==="Gold" && immobilizedGold){
+        return "Silver Wins!";
+    }
+}
+
+
+function adjacent(location){
+    let adjacents=[location-8, location+1, location+8, location-1]
+    if (location >=0 && location<8){
+        adjacents.splice(adjacents.indexOf(location-8), 1);
+    }
+    if (location>=56 && location<64){
+        adjacents.splice(adjacents.indexOf(location+8), 1);
+    }
+    if (location%8===0){
+        adjacents.splice(adjacents.indexOf(location-1), 1);
+    }
+    if (location%8===7){
+        adjacents.splice(adjacents.indexOf(location+1), 1);
+    }
+    return adjacents
 }
