@@ -86,7 +86,7 @@ body {
     top: calc(50% - 12px);
     width: 100%;
     text-align: center;
-    display: none;
+    visibility: hidden
 }
 
 #game-over span{

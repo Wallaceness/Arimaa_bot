@@ -75,22 +75,22 @@ app.post(api+"/setup", function(request, response, next){
     })
 })
 
-app.post(`${api}/gameover`, function(request, response, next){
-    var color = request.body.color;//handle illegal moves
-    var board = request.body.board;
-    var setup = request.body.setup;
-    var move = request.body.move;
-    var id = request.body.id;
-    var winner=request.body.winner;
-    Games.findByPk(id)
-        .then(function(game) {
-            if (move && move!=='')game.dataValues.moves.push(move);
-            if (board !=='') game.dataValues.board.push(board);
-            console.log('game', game)
-            game.update({ moves: game.dataValues.moves, board: game.dataValues.board, winner: winner})
-            response.sendStatus(200);
-        })
-})
+//app.post(`${api}/gameover`, function(request, response, next){
+//    var color = request.body.color;//handle illegal moves
+//    var board = request.body.board;
+//    var setup = request.body.setup;
+//    var move = request.body.move;
+//    var id = request.body.id;
+//    var winner=request.body.winner;
+//    Games.findByPk(id)
+//        .then(function(game) {
+//            if (move && move!=='')game.dataValues.moves.push(move);
+//            if (board !=='') game.dataValues.board.push(board);
+//            console.log('game', game)
+//            game.update({ moves: game.dataValues.moves, board: game.dataValues.board, winner: winner})
+//            response.sendStatus(200);
+//        })
+//})
 
 app.post(api+"/move", function(request, response, next){
     var color = request.body.color;
@@ -99,33 +99,64 @@ app.post(api+"/move", function(request, response, next){
     var move = request.body.move;
     var id = request.body.id;
     var winner=request.body.winner;
-    if (checkEndgame(board)){
-        response.send(color + " wins!")
+    const endgame = checkEndgame(board)
+    if (endgame.winner){
+    //game won by player
+        Games.findByPk(id)
+            .then(function(game) {
+                if (move && move!=='')game.dataValues.moves.push(move);
+                if (board !=='') game.dataValues.board.push(board);
+                console.log('game', game)
+                game.update({ moves: game.dataValues.moves, board: game.dataValues.board, winner: endgame.winner})
+                response.json({winner: endgame.winner, reason: endgame.reason});
+                return
+            })
     }
-    child_process.exec("python ./arimaa_bot/shell_for_bot.py " + color + " " + board + " " + setup, function(error, stdout, stderr) {
-        console.log(error, stdout, stderr)
-        if (error) response.send(error);
-        else if (stderr) response.send(stderr);
-        else {
-            var x = eval(stdout);
-                response.json({move: convertMove(x[0])});
-                console.log("update 2", id);
-                Games.findByPk(id)
-                .then(function(game) {
-                    if (!move || move===""){
-                        game.dataValues.moves.push("Silver setup")
-                    }
-                    else{
-                        game.dataValues.moves.push(move);
-                    }
-                    game.dataValues.moves.push(convertMove(x[0]).join(","));
-                    if (board !=='') game.dataValues.board.push(board);
-                    game.dataValues.board.push(x[1].toString());
-                    // console.log('game', game)
-                    game.update({ moves: game.dataValues.moves, board: game.dataValues.board});
-                })
-        }
-    })
+    else{
+        child_process.exec("python ./arimaa_bot/shell_for_bot.py " + color + " " + board + " " + setup, function(error, stdout, stderr) {
+            console.log(error, stdout, stderr)
+            if (error) response.send(error);
+            else if (stderr) response.send(stderr);
+            else {
+            Games.findByPk(id)
+                        .then(function(game) {
+                            let x = eval(stdout);
+                            if (x[0].length===0){
+                            //bot did not submit a move
+                                if (move && move!=='')game.dataValues.moves.push(move);
+                                if (board !=='') game.dataValues.board.push(board);
+                                console.log('game', game)
+                                game.update({ moves: game.dataValues.moves, board: game.dataValues.board, winner: oppositeColor[color]})
+                                response.json({winner: oppositeColor[color], reason: "Invalid Move"});
+                            }
+                            else{
+                                const endgame = checkEndgame(board)
+                                if (endgame.winner){
+                                    //game won by bot (yeah right..)
+                                    if (move && move!=='')game.dataValues.moves.push(move);
+                                    if (board !=='') game.dataValues.board.push(board);
+                                    console.log('game', game)
+                                    game.update({ moves: game.dataValues.moves, board: game.dataValues.board, winner: endgame.winner})
+                                    response.json({winner: endgame.winner, reason: endgame.reason});
+                                }
+                                response.json({move: convertMove(x[0])});
+                                console.log("update 2", id);
+                                if (!move || move===""){
+                                    game.dataValues.moves.push("Silver setup")
+                                }
+                                else{
+                                    game.dataValues.moves.push(move);
+                                }
+                                game.dataValues.moves.push(convertMove(x[0]).join(","));
+                                if (board !=='') game.dataValues.board.push(board);
+                                game.dataValues.board.push(x[1].toString());
+                                // console.log('game', game)
+                                game.update({ moves: game.dataValues.moves, board: game.dataValues.board});
+                            }
+                        })
+            }
+        })
+    }
 })
 
 app.get(`${api}/users/:userid`, function(request, response, next) {
@@ -223,24 +254,29 @@ function checkEndgame(board){
         }
     });
     if (rabbits===0){
-        console.log( "Gold wins!")   
+        console.log( "Gold wins!")
+        return {winner:"Gold", reason: "Elimination"}
     }
     else if (Rabbits===0){
         console.log( "Silver wins!")
+        return {winner:"Silver", reason:"Elimination"}
     }
     //check goal
     for (let x=0, length=board.length-1; x<8; x++){
         if (board[x]==='R'){
-            console.log( "Gold wins!")       
+            console.log( "Gold wins!")
+            return {winner: "Gold", reason: "Goal"}
         }
         else if (board[length-x]==='r'){
             console.log( "Silver wins!")
+            return {winner: "Silver", reason: "Goal"}
         }
     }
     let immobilized=checkMoves(board, "Gold");
+    if (immobilized) return immobilized
     console.log("IM", immobilized);
     console.log("board", board);
-    return false
+    return {winner: false, reason: null}
 }
 
 function checkMoves(board, color){
@@ -250,7 +286,7 @@ function checkMoves(board, color){
     for (let x=0, length=board.length; x<length; x++){
         if (board[x]!==""){
             let adjacents=adjacent(x);
-            if (ranks[board[x]]){
+            if (ranks[board[x]] && immobilizedGold){
                 //gold piece
                 let piece=ranks[board[x]];
                 let frozen=false;
@@ -285,7 +321,7 @@ function checkMoves(board, color){
                     }
                 }
             }
-            else{
+            else if (immobilizedSilver){
                 //silver piece
                 let adjacents=adjacent(x);
                 let piece=ranks[board[x].toUpperCase()];
@@ -324,10 +360,10 @@ function checkMoves(board, color){
         }
     }
     if (color==="Silver" && immobilizedSilver){
-        return "Gold Wins!";
+        return {winner: "Gold", reason: "Immobilization"};
     }
     else if (color==="Gold" && immobilizedGold){
-        return "Silver Wins!";
+        return {winner: "Silver", reason: "Immobilization"};
     }
 }
 
@@ -348,3 +384,67 @@ function adjacent(location){
     }
     return adjacents
 }
+
+const oppositeColor={"silver": "gold", "gold": "silver"}
+
+function toggle(space) {
+        if (freeze) {
+            return;
+        }
+        var location = gameboard[id[0]][id[2]];
+        space.setAttribute('data-status', 'Selected');
+        if (selected) {
+            var adjacents = adjacent(selected);
+            console.log(adjacents);
+            var s_id = selected.id;
+            var s_location = gameboard[s_id[0]][s_id[2]];
+            if (pieces[other_color].indexOf(s_location) !== -1) {
+                console.log('check');
+                if (other_color == 'silver' && (+s_id[0] !== 0)) {
+                    adjacents.push((+s_id[0] - 1) + '-' + s_id[2]);
+                    console.log(adjacents);
+                } else if (other_color == 'gold' && (+s_id[0] !== 7)) {
+                    adjacents.push((+s_id[0] + 1) + '-' + s_id[2]);
+                    console.log(adjacents);
+                }
+            }
+            if (swap === false && gameboard[id[0]][id[2]] == '' && adjacents.indexOf(id) !== -1 && pushes.length === 1) {
+                if (last_move) {
+                    var last = gameboard[+last_move[1][0]][+last_move[1][2]];
+                    console.log(pieces[color].indexOf(last) > pieces[other_color].indexOf(s_location));
+                }
+                if (pieces[color].indexOf(s_location) !== -1 && !is_frozen(selected)) {
+                    move(id, s_id, adjacents, s_location, space);
+                } else if (pieces[other_color].indexOf(s_location) !== -1 && pieces[color].indexOf(last) > pieces[other_color].indexOf(s_location) && moves.length > 0 && moves[moves.length - 1][0] === id) {
+                    console.log("This is a pull!")
+                    move(id, s_id, adjacents, s_location, space);
+                } else if (pieces[other_color].indexOf(s_location) !== -1 && push_check(selected) && count < 3) {
+                    console.log("This is a push!");
+                    move(id, s_id, adjacents, s_location, space);
+                }
+            } else if (pushes.length !== 1) {
+                console.log("Almost");
+                if (pushes.indexOf(selected.id) !== -1 && pushes[0].indexOf(space.id) !== -1) {
+                    console.log("PUSH!!!!!!!");
+                    move(id, s_id, adjacents, s_location, space);
+                    pushes = [
+                        []
+                    ];
+                    moves[moves.length - 1].push("PUSH");
+                }
+            }
+        }
+        selected = space;
+        update_moves();
+        if (color === "gold" && gameboard[id[0]][id[2]] === 'R' && selected.id[0] == 0) {
+            alert("Gold has won!");
+            freeze = true;
+            gameover = true;
+            submit(true);
+        } else if (color === "silver" && gameboard[id[0]][id[2]] === 'r' && selected.id[0] == 7) {
+            alert("Silver has won!");
+            freeze = true;
+            gameover = true;
+            submit(true);
+        }
+    }

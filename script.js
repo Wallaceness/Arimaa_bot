@@ -222,21 +222,9 @@ $('document').ready(function(){
         if (selected) {
             seed_space(selected);
         }
-        //space.style.border="5px solid blue";
         space.style.opacity = .5;
         selected = space;
         update_moves();
-        if (color === "gold" && gameboard[id[0]][id[2]] === 'R' && selected.id[0] == 0) {
-            alert("Gold has won!");
-            freeze = true;
-            gameover = true;
-            submit(true);
-        } else if (color === "silver" && gameboard[id[0]][id[2]] === 'r' && selected.id[0] == 7) {
-            alert("Silver has won!");
-            freeze = true;
-            gameover = true;
-            submit(true);
-        }
     }
 
     function two_things() {
@@ -462,6 +450,8 @@ $('document').ready(function(){
 
     function submit(end) {
         if (gameover === true && !end) {
+            document.getElementById("game-over").visibility = "visible"
+            alert(color+" has won!")
             return;
         }
         else if (end){
@@ -481,11 +471,6 @@ $('document').ready(function(){
                 else if (+lc>+dc) m.push(location+" north");
                 else if (+lc<+dc) m.push(location+" south");
             }
-            winner=color;
-            return $.post("/api/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
-                console.log(data)
-                document.getElementById("game-over").style.display="block"
-            })
 
         }
         else if (count > 0 || swap) {
@@ -560,6 +545,16 @@ $('document').ready(function(){
             }
             else{
                 return $.post('/api/move', { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data) {
+                    if (data.winner){
+                        gameover = true;
+                        freeze = true;
+                        moves=[];
+                        var temp=color
+                        color=other_color
+                        other_color=temp
+                        submit()
+                        return
+                    }
                     let move = 0;
                     console.log(data);
                     previous_move=[];
