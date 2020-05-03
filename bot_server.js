@@ -269,7 +269,7 @@ function checkMoves(board, color){
                             immobilizedGold=false;
                             break;
                         }
-                        else if (ranks[board[adjacents[a]].toUpperCase()]){
+                        else if (ranks[board[adjacents[b]].toUpperCase()]){
                             let adjacents2=adjacent(adjacents[b]);
                             let br=false;
                             adjacents2.splice(adjacents2.indexOf(x), 1);
@@ -305,7 +305,7 @@ function checkMoves(board, color){
                             immobilizedSilver=false;
                             break;
                         }
-                        else if (ranks[board[adjacents[a]]]){
+                        else if (ranks[board[adjacents[b]]]){
                             let adjacents2=adjacent(adjacents[b]);
                             let br=false;
                             adjacents2.splice(adjacents2.indexOf(x), 1);
