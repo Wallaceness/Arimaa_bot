@@ -222,21 +222,9 @@ $('document').ready(function(){
         if (selected) {
             seed_space(selected);
         }
-        //space.style.border="5px solid blue";
         space.style.opacity = .5;
         selected = space;
         update_moves();
-        if (color === "gold" && gameboard[id[0]][id[2]] === 'R' && selected.id[0] == 0) {
-            alert("Gold has won!");
-            freeze = true;
-            gameover = true;
-            submit(true);
-        } else if (color === "silver" && gameboard[id[0]][id[2]] === 'r' && selected.id[0] == 7) {
-            alert("Silver has won!");
-            freeze = true;
-            gameover = true;
-            submit(true);
-        }
     }
 
     function two_things() {
@@ -422,8 +410,12 @@ $('document').ready(function(){
         }
         var adjacents = find_adjacent(space);
         var this_piece = gameboard[+space.id[0]][+space.id[2]];
-        adjacents.push((+space.id[0] - 1).toString() + '-' + space.id[2]);
-        adjacents.push((+space.id[0] + 1).toString() + '-' + space.id[2]);
+        if(parseInt(space.id[0])>0){
+            adjacents.push((+space.id[0] - 1).toString() + '-' + space.id[2]);
+        }
+        if (parseInt(space.id[0])<7){
+            adjacents.push((+space.id[0] + 1).toString() + '-' + space.id[2]);
+        }
         for (var item in adjacents) {
             var other_piece = gameboard[+adjacents[item][0]][+adjacents[item][2]];
             //check all items in adjacent spaces to see if they are an opposite colored piece and if they are less in rank than this piece
@@ -460,35 +452,8 @@ $('document').ready(function(){
         }
     }
 
-    function submit(end) {
-        if (gameover === true && !end) {
-            return;
-        }
-        else if (end){
-            let m = [];
-            for (var step in moves) {
-                var s=moves[step];
-                var location=s[0];
-                var destination=s[1];
-                var l=location.split('-');
-                var lr=l[1];
-                var lc=l[0];
-                var d=destination.split('-');
-                var dc=d[0];
-                var dr=d[1];
-                if (+lr>+dr) m.push(location+" west");
-                else if (+lr<+dr) m.push(location+" east");
-                else if (+lc>+dc) m.push(location+" north");
-                else if (+lc<+dc) m.push(location+" south");
-            }
-            winner=color;
-            return $.post("/api/gameover", { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data){
-                console.log(data)
-                document.getElementById("game-over").style.display="block"
-            })
-
-        }
-        else if (count > 0 || swap) {
+    function submit() {
+        if (count > 0 || swap) {
             count = 0;
             freeze = false;
             computer_move = true;
@@ -560,6 +525,20 @@ $('document').ready(function(){
             }
             else{
                 return $.post('/api/move', { color: color, board: gameboard.toString(), setup: swap, move: m.toString(), id: game_id, winner: winner}, function(data) {
+                    if (data.winner){
+                        gameover = true;
+                        freeze = true;
+                        moves=[];
+                        var temp=color
+                        color=other_color
+                        other_color=temp
+                        document.getElementById("game-over").style.visibility = "visible"
+                        alert(color+" has won due to "+data.reason);
+                        return
+                    }
+                    else if (data==="Invalid move"){
+                        alert("You submitted an invalid move. Please refresh browser to fetch game state and try again.")
+                    }
                     let move = 0;
                     console.log(data);
                     previous_move=[];
@@ -608,18 +587,6 @@ $('document').ready(function(){
                         previous_move.push(space+' '+direction);
                         toggle(destination);
                         console.log(tracker, count);
-                        if (count === tracker) {
-                            alert("Bot has submitted an illegal move. You win by forfeit.");
-                            gameover = true;
-                            freeze = true;
-                            moves=[];
-                            var temp=color
-                            color=other_color
-                            other_color=temp
-                            clearInterval(interval);
-                            submit(true);
-                            return;
-                        }
                         //call toggle function here after having set selected to first space and calculated
                         //second space by direction
                         move += 1;
