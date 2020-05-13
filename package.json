@@ -5,7 +5,7 @@
     "main": "bot_server.js",
     "scripts": {
         "start": "node bot_server.js",
-        "start-dev": "node --inspect bot_server.js"
+        "start-dev": "nodemon --inspect bot_server.js"
     },
     "dependencies": {
         "body-parser": "^1.19.0",
@@ -13,5 +13,8 @@
         "pg": "^6.4.2",
         "sequelize": "^5.21.7",
         "sequelize-cli": "^5.5.1"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.0"
     }
 }
