@@ -8,8 +8,8 @@
         "start-dev": "nodemon --inspect bot_server.js"
     },
     "dependencies": {
-        "body-parser": "^1.19.0",
-        "express": "^4.17.1",
+        "body-parser": "^1.20.1",
+        "express": "^4.18.2",
         "pg": "^6.4.2",
         "sequelize": "^5.21.7",
         "sequelize-cli": "^5.5.1"
